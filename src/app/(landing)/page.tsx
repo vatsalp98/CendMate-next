@@ -1,6 +1,5 @@
-import Link from "next/link";
 import MaxWidthWrapper from "../_components/MaxWitdhWrapper";
-import { Button, buttonVariants } from "~/components/ui/button";
+import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import Image from "next/image";
 import { Label } from "~/components/ui/label";
@@ -13,16 +12,8 @@ import {
 } from "~/components/ui/select";
 import RandomDots from "../_components/ColoredPoint";
 import FlagDiv from "../_components/FlagDiv";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
 import FeatureCard from "../_components/FeatureCard";
-import { CheckCircle, QuoteIcon } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 import TestimonialCard from "../_components/TestimonialCard";
 
 export default function HomePage() {
