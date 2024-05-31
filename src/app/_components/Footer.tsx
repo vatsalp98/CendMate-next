@@ -9,7 +9,7 @@ export default function Footer() {
       <div className="border-t border-gray-200 pb-10 pt-8">
         <MaxWidthWrapper>
           <div className="mb-6 flex w-full flex-col md:flex-row md:justify-evenly md:gap-8">
-            <div className="flex w-[250px] flex-col items-center justify-center">
+            <div className="flex w-full flex-col items-center justify-center md:w-[250px]">
               <Image src="/logo512.png" alt="Logo" width={100} height={100} />
               <div>
                 <h3>Follow us on social media</h3>
@@ -69,7 +69,7 @@ export default function Footer() {
                 <ul>
                   <li>
                     <Link
-                      href={"/terms"}
+                      href={"/terms-and-conditions"}
                       className="hover:text-primary hover:underline"
                     >
                       Terms and Conditions
@@ -77,7 +77,7 @@ export default function Footer() {
                   </li>
                   <li>
                     <Link
-                      href={"/terms"}
+                      href={"/privacy-policy"}
                       className="hover:text-primary hover:underline"
                     >
                       Privacy Policy
@@ -85,7 +85,7 @@ export default function Footer() {
                   </li>
                   <li>
                     <Link
-                      href={"/terms"}
+                      href={"/aml-policy"}
                       className="hover:text-primary hover:underline"
                     >
                       AML Policy
