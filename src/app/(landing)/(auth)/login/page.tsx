@@ -7,36 +7,13 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "~/components/ui/form";
-import { Checkbox } from "~/components/ui/checkbox";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "~/components/ui/input";
+import { useState } from "react";
+import LoginForm from "~/app/_components/LoginForm";
+import OtpForm from "~/app/_components/OtpForm";
 
 export default function LoginPage() {
-  const loginFormSchema = z.object({
-    email: z.string().email("Invalid email format."),
-    password: z.string(),
-    rememberMe: z.boolean().default(false),
-  });
-
-  type TLoginFormSchema = z.infer<typeof loginFormSchema>;
-
-  const form = useForm<TLoginFormSchema>({
-    resolver: zodResolver(loginFormSchema),
-  });
-
-  const onSubmit = (values: TLoginFormSchema) => {
-    console.log("VALUES", values);
-  };
+  const [step, setStep] = useState(0);
+  const [userId, setUserId] = useState("");
 
   return (
     <>
@@ -55,60 +32,20 @@ export default function LoginPage() {
               </CardDescription>
             </div>
             <div className="w-full pb-6 pt-2">
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} id="login-form">
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Email Address" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Password</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="password"
-                            {...field}
-                            type="password"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="rememberMe"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-2 space-y-0 pt-3">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                        <FormLabel className="">Remember Me</FormLabel>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </form>
-              </Form>
+              {step === 0 && (
+                <LoginForm setUserId={setUserId} setStep={setStep} />
+              )}
+              {step === 1 && <OtpForm userId={userId} />}
             </div>
-            <Button type="submit" className="w-full" form="login-form">
-              Sign In
-            </Button>
+            {step === 0 ? (
+              <Button type="submit" className="w-full" form="login-form">
+                Sign In
+              </Button>
+            ) : (
+              <Button type="submit" form="otp-form" className="w-full">
+                Verify
+              </Button>
+            )}
             <Button variant={"link"} className="items-end">
               Forgot Password
             </Button>

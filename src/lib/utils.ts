@@ -6,6 +6,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function formatMoney(amount: number): string {
+  return amount.toFixed(2);
+}
+
 export function constructMetadata({
   title = "Cendmate Inc.",
   description = "Cendmate - Send Money To Friends And Family Instantly",

@@ -2,6 +2,7 @@ import Link from "next/link";
 import MaxWidthWrapper from "./MaxWitdhWrapper";
 import Image from "next/image";
 import { Facebook, InstagramIcon, Twitter } from "lucide-react";
+import { ModeToggle } from "./ThemeToggle";
 
 export default function Footer() {
   return (
@@ -95,8 +96,9 @@ export default function Footer() {
               </div>
             </div>
           </div>
-          <div className="flex w-full items-center justify-center border-t border-gray-200 pb-2 pt-4 text-sm text-muted-foreground">
-            © 2024 Cendmate. All rights reserved.
+          <div className="flex w-full items-center justify-between border-t border-gray-200 pb-2 pt-4 text-sm text-muted-foreground">
+            <div>© 2024 Cendmate. All rights reserved.</div>
+            <ModeToggle />
           </div>
         </MaxWidthWrapper>
       </div>

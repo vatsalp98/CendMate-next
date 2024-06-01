@@ -1,8 +1,9 @@
 import "~/styles/globals.css";
 import { GeistSans } from "geist/font/sans";
-import { TRPCReactProvider } from "~/trpc/react";
 import { cn, constructMetadata } from "~/lib/utils";
 import type { Metadata } from "next";
+import { ThemeProvider } from "./_components/ThemeProviders";
+import { TRPCReactProvider } from "~/trpc/react";
 
 export const metadata: Metadata = constructMetadata();
 
@@ -19,7 +20,14 @@ export default function RootLayout({
           GeistSans.className,
         )}
       >
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <TRPCReactProvider>{children}</TRPCReactProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
