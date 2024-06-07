@@ -16,8 +16,6 @@ import {
 import { Progress } from "~/components/ui/progress";
 import { Input } from "~/components/ui/input";
 import { Separator } from "~/components/ui/separator";
-import { AddressAutofill, SearchBox } from "@mapbox/search-js-react";
-import { env } from "~/env";
 
 export default function AddressForm() {
   const addressFormSchema = z.object({
