@@ -1,0 +1,129 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URI")
+}
+
+enum Role {
+  USER
+  ADMIN
+  SUPPORT
+}
+
+model User {
+  id                      String        @id @default(auto()) @map("_id") @db.ObjectId
+  uid                     String        @unique
+  email                   String        @unique
+  isVerified              Boolean       @default(false)
+  isSubmitted             Boolean       @default(false)
+  role                    Role          @default(USER)
+  firstName               String
+  lastName                String
+  userClass               String        @default("customer")
+  avatar                  String        @default("/avatars/sampleUser.png")
+  notificationPreferences String        @default("email")
+  recoveryEmail           String
+  dob                     String
+  phone                   String
+  userName                String
+  picIdFront              String?
+  picIdBack               String?
+  picHoldingId            String?
+  typeOfId                String?
+  idNumber                String?
+  bvnNumber               String?
+  purposeAccount          String?
+  occupation              String?
+  mapleRadCustomerId      String?
+  country                 String
+  password                String
+  createdAt               DateTime      @default(now())
+  updatedAt               DateTime      @updatedAt
+  address                 Address?
+  wallets                 Wallet[]
+  transactions            Transaction[]
+  limits                  Limit[]
+}
+
+model Limit {
+  id               String @id @default(auto()) @map("_id") @db.ObjectId
+  currency         String 
+  deposit_daily    Float
+  deposit_weekly   Float
+  deposit_monthly  Float
+  withdraw_daily   Float
+  withdraw_monthly Float
+  withdraw_weekly  Float
+  userId           String @db.ObjectId
+  user             User   @relation(fields: [userId], references: [id])
+}
+
+model ExchangeRate {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  currency         String
+  fixedRateEnabled Boolean  @default(true)
+  fixedBuyRate     Float    @default(0.0)
+  fixedSellRate    Float    @default(0.0)
+  floatingMargin   Float    @default(0.0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model Transaction {
+  id                    String            @id @default(auto()) @map("_id") @db.ObjectId
+  type                  String
+  currency              String
+  amount                Float
+  status                TransactionStatus @default(SUBMITTED)
+  comment               String            @default("")
+  completedAt           DateTime?
+  bankDetails           String?
+  referenceId           String
+  amountToSettle        Float?
+  mapleRad              Json?
+  fincraPayCode         String?
+  fincraChargeReference String?
+  fincraPhone           String?
+  fincraPhoneOperator   String?
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+  walletId              String            @db.ObjectId
+  wallet                Wallet            @relation(fields: [walletId], references: [id])
+  senderId              String            @db.ObjectId
+  sender                User              @relation(fields: [senderId], references: [id])
+}
+
+enum TransactionStatus {
+  SUBMITTED
+  SUCCESS
+  FAILED
+}
+
+model Wallet {
+  id                 String        @id @default(auto()) @map("_id") @db.ObjectId
+  currency           String
+  amount             Float         @default(0.0)
+  mapleRadCustomerId String?
+  mapleRadObject     Json?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  transactions       Transaction[]
+  ownerId            String        @db.ObjectId
+  owner              User          @relation(fields: [ownerId], references: [id])
+}
+
+model Address {
+  id           String  @id @default(auto()) @map("_id") @db.ObjectId
+  addressLine1 String
+  addressLine2 String?
+  city         String
+  state        String
+  country      String
+  countryCode  String
+  postal       String
+  userId       String  @unique @db.ObjectId
+  user         User    @relation(fields: [userId], references: [id])
+}

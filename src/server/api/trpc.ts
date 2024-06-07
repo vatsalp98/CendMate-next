@@ -6,10 +6,11 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-import { initTRPC } from "@trpc/server";
+import { TRPCError, initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
-
+import { db } from "../db";
+import { createClient } from "~/lib/supabase/server";
 /**
  * 1. CONTEXT
  *
@@ -23,7 +24,14 @@ import { ZodError } from "zod";
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   return {
+    db,
+    user,
+    supabase,
     ...opts,
   };
 };
@@ -63,6 +71,19 @@ export const createCallerFactory = t.createCallerFactory;
  * "/src/server/api/routers" directory.
  */
 
+const isAuthed = t.middleware(({ ctx, next }) => {
+  if (!ctx.user || ctx.user?.role !== "authenticated") {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+
+  return next({
+    ctx: {
+      ...ctx,
+      user: ctx.user,
+    },
+  });
+});
+
 /**
  * This is how you create new routers and sub-routers in your tRPC API.
  *
@@ -78,3 +99,4 @@ export const createTRPCRouter = t.router;
  * are logged in.
  */
 export const publicProcedure = t.procedure;
+export const privateProcedure = t.procedure.use(isAuthed);

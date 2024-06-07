@@ -1,9 +1,13 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
+import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import {
   Form,
@@ -14,26 +18,30 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import { createClient } from "~/lib/supabase/client";
 import { api } from "~/trpc/react";
 
-interface LoginFormProps {
-  setStep: (step: number) => void;
-  setUserId: (userId: string) => void;
-}
-
-export default function LoginForm({ setStep, setUserId }: LoginFormProps) {
+export default function LoginForm() {
+  const router = useRouter();
   const loginFormSchema = z.object({
     email: z.string().email("Invalid email format."),
     password: z.string(),
     rememberMe: z.boolean().default(false),
   });
+
   const loginMutation = api.auth.login.useMutation({
-    onSettled: (data) => {
+    onSuccess: async (data) => {
       console.log("DATA", data);
-      if (data) {
-        setUserId(data?.userId);
-        setStep(1);
-      }
+      const { session } = data;
+      const supabase = createClient();
+      await supabase.auth.setSession({
+        access_token: session.access_token,
+        refresh_token: session.refresh_token,
+      });
+      router.push("/dashboard");
+    },
+    onError: (error) => {
+      toast.error(error.message);
     },
   });
 
@@ -96,6 +104,13 @@ export default function LoginForm({ setStep, setUserId }: LoginFormProps) {
               </FormItem>
             )}
           />
+          <Button type="submit" className="mt-3 w-full">
+            {loginMutation.isPending ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              "Sign In"
+            )}
+          </Button>
         </form>
       </Form>
     </>

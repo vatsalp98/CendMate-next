@@ -1,6 +1,6 @@
 import Link from "next/link";
 import SignupForm from "~/app/_components/SignupForm";
-import { buttonVariants } from "~/components/ui/button";
+import { Button, buttonVariants } from "~/components/ui/button";
 import {
   Card,
   CardContent,
@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 
-export default function SignupPage() {
+export default function OTPPage() {
   return (
     <>
       <div className="mx-auto flex flex-col items-center justify-center py-32">
@@ -20,9 +20,11 @@ export default function SignupPage() {
               <div className="h-16 w-16 bg-[url('/logo192.png')] bg-contain bg-center" />
             </div>
             <div className="">
-              <CardTitle className="font-bold text-primary">Sign Up</CardTitle>
+              <CardTitle className="font-bold text-primary">
+                Onboarding
+              </CardTitle>
               <CardDescription>
-                Enter your details to create your new account.
+                Enter your address details to finish setting up your account.
               </CardDescription>
             </div>
           </CardHeader>
@@ -30,14 +32,7 @@ export default function SignupPage() {
             <SignupForm />
           </CardContent>
           <CardFooter className="items-center justify-center">
-            <Link
-              href="/login"
-              className={buttonVariants({
-                variant: "link",
-              })}
-            >
-              Already have an account?
-            </Link>
+            <Button></Button>
           </CardFooter>
         </Card>
       </div>

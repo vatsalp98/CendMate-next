@@ -5,6 +5,8 @@ import { buttonVariants } from "~/components/ui/button";
 import MaxWidthWrapper from "./MaxWitdhWrapper";
 import { useEffect, useState } from "react";
 import { cn } from "~/lib/utils";
+import UserDropdown from "./UserDropdown";
+import MobileNav from "./MobileNav";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -32,7 +34,7 @@ const Navbar = () => {
         <header className="relative ">
           <div className="px-10">
             <div className="flex h-16 items-center">
-              {/* <MobileNav /> */}
+              <MobileNav />
 
               <div className="ml-8 flex lg:ml-0">
                 <Link href="/" className="flex flex-row items-center gap-2">
@@ -46,8 +48,6 @@ const Navbar = () => {
                   />
                 </Link>
               </div>
-
-              <div className="z-50 hidden md:ml-10 md:flex"></div>
 
               <div className="ml-auto flex items-center">
                 <div className="hidden md:flex md:flex-1 md:items-center md:justify-end md:space-x-6">
@@ -96,17 +96,17 @@ const Navbar = () => {
                 )} */}
 
                   {/* {user ? (
-                  <UserAccountNav user={user} />
-                ) : (
-                  <Link
-                    href="/sign-up"
-                    className={buttonVariants({
-                      variant: "ghost",
-                    })}
-                  >
-                    Create account
-                  </Link>
-                )} */}
+                    <UserDropdown user={user} />
+                  ) : (
+                    <Link
+                      href="/sign-up"
+                      className={buttonVariants({
+                        variant: "ghost",
+                      })}
+                    >
+                      Create account
+                    </Link>
+                  )} */}
 
                   {/* {user ? (
                     <span className="h-6 w-px bg-gray-200" aria-hidden="true" />

@@ -1,8 +1,14 @@
 import type { ReactNode } from "react";
 import Navbar from "../_components/NavBar";
 import Footer from "../_components/Footer";
+import { createClient } from "~/lib/supabase/server";
+import { redirect } from "next/navigation";
 
-export default function LandingLayout({ children }: { children: ReactNode }) {
+export default async function LandingLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   return (
     <>
       <section className="relative flex min-h-screen flex-col">

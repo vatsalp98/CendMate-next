@@ -3,7 +3,7 @@ import { Button } from "~/components/ui/button";
 import TransactionsList from "~/app/_components/TransactionsList";
 import WalletList from "~/app/_components/WalletsList";
 import DailyLimitTable from "~/app/_components/DailyLimitTable";
-import { ArrowUpRight, PlusIcon } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 
 export default function DashboardPage() {
   return (
@@ -19,16 +19,7 @@ export default function DashboardPage() {
             </div>
 
             <div className="mt-10">
-              <div className="mb-6 flex w-full flex-row justify-between">
-                <h3 className="text-2xl font-semibold">Your Wallets</h3>
-                <Button variant={"default"} className="flex flex-row gap-2">
-                  <PlusIcon />
-                  Create Wallet
-                </Button>
-              </div>
-              <div className="">
-                <WalletList />
-              </div>
+              <WalletList />
             </div>
           </div>
         </MaxWidthWrapper>

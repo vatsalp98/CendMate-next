@@ -4,6 +4,7 @@ import { cn, constructMetadata } from "~/lib/utils";
 import type { Metadata } from "next";
 import { ThemeProvider } from "./_components/ThemeProviders";
 import { TRPCReactProvider } from "~/trpc/react";
+import { Toaster } from "~/components/ui/sonner";
 
 export const metadata: Metadata = constructMetadata();
 
@@ -28,6 +29,7 @@ export default function RootLayout({
         >
           <TRPCReactProvider>{children}</TRPCReactProvider>
         </ThemeProvider>
+        <Toaster />
       </body>
     </html>
   );

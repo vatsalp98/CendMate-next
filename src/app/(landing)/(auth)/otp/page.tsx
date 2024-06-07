@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 
-export default function SignupPage() {
+export default function OTPPage() {
   return (
     <>
       <div className="mx-auto flex flex-col items-center justify-center py-32">

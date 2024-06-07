@@ -24,10 +24,20 @@ export default function TransactionsList({ limit }: TransactionListProps) {
 
   return (
     <>
+      {transactions.data?.length === 0 && (
+          <div className="flex w-full flex-col items-center justify-center rounded-lg border border-dashed py-10">
+            <div className="flex flex-col items-center justify-center">
+              <h2 className="text-lg font-semibold">No transactions found.</h2>
+              <span className="text-sm text-muted-foreground">
+                Once you make a transactions you see more details here.
+              </span>
+            </div>
+          </div>
+      )}
       <div className="flex flex-col gap-4">
         {transactions.data?.slice(0, limit).map((item) => (
           <Card
-            key={item._id}
+            key={item.id}
             className="flex cursor-pointer flex-row items-center justify-between pr-10 shadow-md transition-all duration-75 hover:shadow-lg"
           >
             <div className="flex flex-row items-center pl-4">
@@ -37,13 +47,13 @@ export default function TransactionsList({ limit }: TransactionListProps) {
               <div>
                 <CardHeader>
                   <CardTitle>
-                    {item.user.fName} {item.user.lName}
+                    {item.sender.firstName} {item.sender.lastName}
                   </CardTitle>
                   <CardDescription>
                     Created On {new Date(item.createdAt).toLocaleString()}
                   </CardDescription>
                   <div>
-                    Transaction Id: <strong>{item.fincra.payCode}</strong>
+                    Transaction Id: <strong>{item.fincraPayCode}</strong>
                   </div>
                   <div>
                     <Badge className="rounded-sm bg-[#FFFF00] uppercase text-black">

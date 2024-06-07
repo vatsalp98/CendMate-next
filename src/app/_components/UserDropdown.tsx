@@ -1,5 +1,9 @@
-import { UserIcon, LogOutIcon } from "lucide-react";
+"use client";
+
+import type { User } from "@supabase/supabase-js";
+import { UserIcon, LogOutIcon, LayoutDashboardIcon } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 import {
   DropdownMenu,
@@ -11,8 +15,14 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import { createClient } from "~/lib/supabase/client";
 
-export default function UserDropdown() {
+interface UserDropdownProps {
+  user: User | null;
+}
+
+export default function UserDropdown({ user }: UserDropdownProps) {
+  const router = useRouter();
   return (
     <>
       <DropdownMenu>
@@ -22,21 +32,18 @@ export default function UserDropdown() {
         >
           <Avatar className="rounded-full object-cover">
             <AvatarFallback className="font-semibold text-primary">
-              VP
+              {user?.email?.substring(0, 2)}
             </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuLabel>vatsalparmar98@gmail.com</DropdownMenuLabel>
+          <DropdownMenuLabel>{user?.email}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem className="cursor-pointer">
               <Link
                 href={{
                   pathname: "/profile",
-                  query: {
-                    tab: "general",
-                  },
                 }}
                 className="font-semibold"
               >
@@ -47,18 +54,25 @@ export default function UserDropdown() {
               </DropdownMenuShortcut>
             </DropdownMenuItem>
 
-            {/* {user.role === "admin" && (
-                    <DropdownMenuItem className="cursor-pointer">
-                      <Link href="/admin" className="font-semibold">
-                        Admin dashboard
-                      </Link>
-                      <DropdownMenuShortcut>
-                        <LayoutDashboardIcon />
-                      </DropdownMenuShortcut>
-                    </DropdownMenuItem>
-                  )} */}
+            {user?.role === "ADMIN" && (
+              <DropdownMenuItem className="cursor-pointer">
+                <Link href="/admin" className="font-semibold">
+                  Admin dashboard
+                </Link>
+                <DropdownMenuShortcut>
+                  <LayoutDashboardIcon />
+                </DropdownMenuShortcut>
+              </DropdownMenuItem>
+            )}
 
-            <DropdownMenuItem className="flex cursor-pointer flex-row justify-between font-semibold text-red-500">
+            <DropdownMenuItem
+              className="flex cursor-pointer flex-row justify-between font-semibold text-red-500"
+              onClick={async () => {
+                const supabase = createClient();
+                await supabase.auth.signOut();
+                router.push("/");
+              }}
+            >
               Log out
               <DropdownMenuShortcut>
                 <LogOutIcon />
