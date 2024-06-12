@@ -1,11 +1,8 @@
-import Link from "next/link";
-import SignupForm from "~/app/_components/SignupForm";
-import { Button, buttonVariants } from "~/components/ui/button";
+import AddressForm from "~/app/_components/AddressForm";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
@@ -20,20 +17,15 @@ export default function OTPPage() {
               <div className="h-16 w-16 bg-[url('/logo192.png')] bg-contain bg-center" />
             </div>
             <div className="">
-              <CardTitle className="font-bold text-primary">
-                Onboarding
-              </CardTitle>
+              <CardTitle className="font-bold text-primary">Welcome,</CardTitle>
               <CardDescription>
-                Enter your address details to finish setting up your account.
+                We need some information to finish your setup.
               </CardDescription>
             </div>
           </CardHeader>
           <CardContent>
-            <SignupForm />
+            <AddressForm />
           </CardContent>
-          <CardFooter className="items-center justify-center">
-            <Button></Button>
-          </CardFooter>
         </Card>
       </div>
     </>

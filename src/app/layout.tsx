@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { ThemeProvider } from "./_components/ThemeProviders";
 import { TRPCReactProvider } from "~/trpc/react";
 import { Toaster } from "~/components/ui/sonner";
+import { ClerkProvider } from "@clerk/nextjs";
 
 export const metadata: Metadata = constructMetadata();
 
@@ -14,23 +15,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`h-full`}>
-      <body
-        className={cn(
-          "relative h-full font-sans antialiased",
-          GeistSans.className,
-        )}
-      >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
+    <ClerkProvider>
+      <html lang="en" className={`h-full`}>
+        <body
+          className={cn(
+            "relative h-full font-sans antialiased",
+            GeistSans.className,
+          )}
         >
-          <TRPCReactProvider>{children}</TRPCReactProvider>
-        </ThemeProvider>
-        <Toaster />
-      </body>
-    </html>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <TRPCReactProvider>{children}</TRPCReactProvider>
+          </ThemeProvider>
+          <Toaster />
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

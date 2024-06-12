@@ -6,7 +6,7 @@ import * as RPNInput from "react-phone-number-input";
 
 import flags from "react-phone-number-input/flags";
 import { cn } from "~/lib/utils";
-import { Input, InputProps } from "./ui/input";
+import { Input, type InputProps } from "./ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Button } from "./ui/button";
 import {

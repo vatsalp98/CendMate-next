@@ -6,7 +6,7 @@ export const transactionRouters = createTRPCRouter({
   getTransactions: privateProcedure.query(async ({ ctx }) => {
     const user = await ctx.db.user.findUnique({
       where: {
-        uid: ctx.user.id,
+        uid: ctx.userId,
       },
     });
 
@@ -44,7 +44,7 @@ export const transactionRouters = createTRPCRouter({
 
       const user = await ctx.db.user.findUnique({
         where: {
-          uid: ctx.user.id,
+          uid: ctx.userId,
         },
       });
 

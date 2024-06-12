@@ -17,7 +17,7 @@ export default function SideBarNav() {
           href="/dashboard"
           className={cn(
             "my-2 flex items-center gap-3 rounded-lg px-3 py-3 font-semibold",
-            pathName === "/dashboard"
+            pathName.startsWith("/dashboard")
               ? "bg-gray-100 text-primary transition-all hover:text-primary"
               : "hover:bg-primary-100 text-muted-foreground transition-all hover:text-primary",
           )}
@@ -29,7 +29,7 @@ export default function SideBarNav() {
           href="/wallets"
           className={cn(
             "my-2 flex items-center gap-3 rounded-lg px-3 py-3 font-semibold",
-            pathName === "/wallets"
+            pathName.startsWith("/wallets")
               ? "bg-blue-100 text-primary transition-all hover:text-primary"
               : "text-muted-foreground transition-all hover:bg-gray-100 hover:text-primary",
           )}
@@ -41,7 +41,7 @@ export default function SideBarNav() {
           href="/recipients"
           className={cn(
             "my-2 flex items-center gap-3 rounded-lg px-3 py-3 font-semibold",
-            pathName === "/recipients"
+            pathName.startsWith("/recipients")
               ? "bg-blue-100 text-primary transition-all hover:text-primary"
               : "text-muted-foreground transition-all hover:bg-gray-100 hover:text-primary",
           )}
@@ -53,7 +53,7 @@ export default function SideBarNav() {
           href="/transactions"
           className={cn(
             "my-2 flex items-center gap-3 rounded-lg px-3 py-3 font-semibold",
-            pathName === "/transactions"
+            pathName.startsWith("/transactions")
               ? "bg-blue-100 text-primary transition-all hover:text-primary"
               : "text-muted-foreground transition-all hover:bg-gray-100 hover:text-primary",
           )}

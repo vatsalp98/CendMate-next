@@ -1,13 +1,16 @@
 import { createTRPCRouter, privateProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
+import axios from "axios";
 import { z } from "zod";
 import { getCurrencyLimits } from "~/config/defaultLimits";
+import type { AccountCreationResponse } from "~/config/models";
+import { env } from "~/env";
 
 export const walletRouter = createTRPCRouter({
   getWallets: privateProcedure.query(async ({ ctx }) => {
     const user = await ctx.db.user.findUnique({
       where: {
-        uid: ctx.user.id,
+        uid: ctx.userId,
       },
     });
 
@@ -41,7 +44,7 @@ export const walletRouter = createTRPCRouter({
       });
       const user = await ctx.db.user.findUnique({
         where: {
-          uid: ctx.user.id,
+          uid: ctx.userId,
         },
       });
 
@@ -70,10 +73,73 @@ export const walletRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const limits = getCurrencyLimits(input.currency);
-      const user = await ctx.db.user.update({
+      const user = await ctx.db.user.findUnique({
         where: {
-          uid: ctx.user.id,
+          uid: ctx.userId,
+        },
+      });
+
+      if (!user) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User not found in the DB",
+        });
+      }
+
+      const limits = getCurrencyLimits(input.currency);
+      if (input.currency === "NGN") {
+        const requestBody = {
+          customer_id: user.mapleRadCustomerId,
+          currency: "NGN",
+          preferred_bank: "251",
+        };
+        const response = await axios.post<AccountCreationResponse>(
+          `${env.MAPLERAD_URL}/v1/collections/virtual-account`,
+          requestBody,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${env.MAPLERAD_SK}`,
+            },
+          },
+        );
+
+        const userNew = await ctx.db.user.update({
+          where: {
+            uid: ctx.userId,
+          },
+          data: {
+            wallets: {
+              create: {
+                currency: input.currency,
+                mapleRadCustomerId: user.mapleRadCustomerId,
+                mapleRadAccountName: response.data.data.account_name,
+                mapleRadAccountNumber: response.data.data.account_number,
+                mapleRadBankName: response.data.data.bank_name,
+                mapleRadAccountId: response.data.data.id,
+              },
+            },
+            limits: {
+              create: {
+                currency: input.currency,
+                deposit_daily: limits.dailyDeposit,
+                deposit_weekly: limits.weeklyDeposit,
+                deposit_monthly: limits.monthlyDeposit,
+                withdraw_daily: limits.dailyWithdrawal,
+                withdraw_weekly: limits.weeklyWithdrawal,
+                withdraw_monthly: limits.monthlyWithdrawal,
+              },
+            },
+          },
+        });
+
+        return userNew;
+      }
+
+      const userNew = await ctx.db.user.update({
+        where: {
+          uid: ctx.userId,
         },
         data: {
           wallets: {
@@ -95,13 +161,6 @@ export const walletRouter = createTRPCRouter({
         },
       });
 
-      if (!user) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "User not found in DB",
-        });
-      }
-
-      return user;
+      return userNew;
     }),
 });

@@ -1,23 +1,24 @@
 import type { ReactNode } from "react";
 import SideBarNav from "../_components/SideBarNav";
 import Link from "next/link";
-import {ArrowUpDownIcon, Home, Menu, User2Icon, Wallet2Icon} from "lucide-react";
-import UserDropdown from "../_components/UserDropdown";
+import {
+  ArrowUpDownIcon,
+  Home,
+  Menu,
+  User2Icon,
+  Wallet2Icon,
+} from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "~/components/ui/sheet";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { ModeToggle } from "../_components/ThemeToggle";
-import { createClient } from "~/lib/supabase/server";
+import { UserButton } from "@clerk/nextjs";
 
 export default async function DashboardLayout({
   children,
 }: {
   children: ReactNode;
 }) {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
   return (
     <>
       <section className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
@@ -78,8 +79,8 @@ export default async function DashboardLayout({
                     Wallets
                   </Link>
                   <Link
-                      href="/recipients"
-                      className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
+                    href="/recipients"
+                    className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
                   >
                     <User2Icon className="h-5 w-5" />
                     Recipients
@@ -95,7 +96,7 @@ export default async function DashboardLayout({
               </SheetContent>
             </Sheet>
             <div className="w-full flex-1"></div>
-            <UserDropdown user={user} />
+            <UserButton />
           </header>
           <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
             {children}

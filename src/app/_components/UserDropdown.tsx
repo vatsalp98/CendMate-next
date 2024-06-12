@@ -3,7 +3,6 @@
 import type { User } from "@supabase/supabase-js";
 import { UserIcon, LogOutIcon, LayoutDashboardIcon } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 import {
   DropdownMenu,
@@ -15,14 +14,12 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import { createClient } from "~/lib/supabase/client";
 
 interface UserDropdownProps {
   user: User | null;
 }
 
 export default function UserDropdown({ user }: UserDropdownProps) {
-  const router = useRouter();
   return (
     <>
       <DropdownMenu>
@@ -65,14 +62,7 @@ export default function UserDropdown({ user }: UserDropdownProps) {
               </DropdownMenuItem>
             )}
 
-            <DropdownMenuItem
-              className="flex cursor-pointer flex-row justify-between font-semibold text-red-500"
-              onClick={async () => {
-                const supabase = createClient();
-                await supabase.auth.signOut();
-                router.push("/");
-              }}
-            >
+            <DropdownMenuItem className="flex cursor-pointer flex-row justify-between font-semibold text-red-500">
               Log out
               <DropdownMenuShortcut>
                 <LogOutIcon />

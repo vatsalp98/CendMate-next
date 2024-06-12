@@ -5,11 +5,12 @@ import { buttonVariants } from "~/components/ui/button";
 import MaxWidthWrapper from "./MaxWitdhWrapper";
 import { useEffect, useState } from "react";
 import { cn } from "~/lib/utils";
-import UserDropdown from "./UserDropdown";
 import MobileNav from "./MobileNav";
+import { UserButton, useAuth } from "@clerk/nextjs";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
+  const { userId } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -70,33 +71,30 @@ const Navbar = () => {
                     </li>
                   </ul>
 
-                  <Link
-                    href="/login"
-                    className={buttonVariants({ variant: "ghost" })}
-                  >
-                    Sign In
-                  </Link>
+                  {userId ? (
+                    <Link
+                      href="/dashboard"
+                      className={buttonVariants({
+                        variant: "ghost",
+                      })}
+                    >
+                      Dashboard
+                    </Link>
+                  ) : null}
 
-                  <Link
-                    href="/sign-up"
-                    className={buttonVariants({
-                      variant: "ghost",
-                    })}
-                  >
-                    Sign Up
-                  </Link>
-                  {/* {user ? null : (
-                  <Link href="/sign-in" className={buttonVariants()}>
-                    Sign in
-                  </Link>
-                )}
+                  {userId ? null : (
+                    <Link
+                      href="/sign-in"
+                      className={buttonVariants({
+                        variant: "ghost",
+                      })}
+                    >
+                      Sign in
+                    </Link>
+                  )}
 
-                {user ? null : (
-                  <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
-                )} */}
-
-                  {/* {user ? (
-                    <UserDropdown user={user} />
+                  {userId ? (
+                    <UserButton />
                   ) : (
                     <Link
                       href="/sign-up"
@@ -106,17 +104,7 @@ const Navbar = () => {
                     >
                       Create account
                     </Link>
-                  )} */}
-
-                  {/* {user ? (
-                    <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
-                  ) : null} */}
-
-                  {/* {user ? null : (
-                  <div className="flex lg:ml-6">
-                    <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
-                  </div>
-                )} */}
+                  )}
                 </div>
               </div>
             </div>

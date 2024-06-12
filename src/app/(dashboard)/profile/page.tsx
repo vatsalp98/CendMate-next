@@ -8,7 +8,6 @@ import {
   MapIcon,
   MapPin,
   MessageCircleIcon,
-  MessageCircleQuestion,
   PhoneCallIcon,
   ShieldCheckIcon,
   UserCog2Icon,
@@ -145,7 +144,7 @@ export default function ProfilePage() {
                       Birthday
                     </span>
                     <Badge className="rounded-sm">
-                      {new Date(userData.dob).toLocaleDateString()}
+                      {new Date(userData.dob!).toLocaleDateString()}
                     </Badge>
                   </div>
                   <Separator className="mt-1" />
@@ -165,16 +164,6 @@ export default function ProfilePage() {
                       Role
                     </span>
                     <Badge className="rounded-sm">{userData.role}</Badge>
-                  </div>
-                  <Separator className="mt-1" />
-                  <div className="mt-4 flex w-full flex-row items-center justify-between gap-2">
-                    <span className="flex flex-row items-center gap-2 text-sm text-muted-foreground">
-                      <MessageCircleQuestion />
-                      Recovery Email
-                    </span>
-                    <Badge className="rounded-sm">
-                      {userData.recoveryEmail}
-                    </Badge>
                   </div>
                 </CardContent>
               </Card>

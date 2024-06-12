@@ -22,11 +22,11 @@ model User {
   role                    Role          @default(USER)
   firstName               String
   lastName                String
+  complyClientId          String        @unique
   userClass               String        @default("customer")
   avatar                  String        @default("/avatars/sampleUser.png")
   notificationPreferences String        @default("email")
-  recoveryEmail           String
-  dob                     String
+  dob                     String?
   phone                   String
   userName                String
   picIdFront              String?
@@ -38,8 +38,7 @@ model User {
   purposeAccount          String?
   occupation              String?
   mapleRadCustomerId      String?
-  country                 String
-  password                String
+  country                 String?
   createdAt               DateTime      @default(now())
   updatedAt               DateTime      @updatedAt
   address                 Address?
@@ -50,7 +49,7 @@ model User {
 
 model Limit {
   id               String @id @default(auto()) @map("_id") @db.ObjectId
-  currency         String 
+  currency         String
   deposit_daily    Float
   deposit_weekly   Float
   deposit_monthly  Float
@@ -85,6 +84,7 @@ model Transaction {
   amountToSettle        Float?
   mapleRad              Json?
   fincraPayCode         String?
+  fincraLink            String?
   fincraChargeReference String?
   fincraPhone           String?
   fincraPhoneOperator   String?
@@ -103,16 +103,19 @@ enum TransactionStatus {
 }
 
 model Wallet {
-  id                 String        @id @default(auto()) @map("_id") @db.ObjectId
-  currency           String
-  amount             Float         @default(0.0)
-  mapleRadCustomerId String?
-  mapleRadObject     Json?
-  createdAt          DateTime      @default(now())
-  updatedAt          DateTime      @updatedAt
-  transactions       Transaction[]
-  ownerId            String        @db.ObjectId
-  owner              User          @relation(fields: [ownerId], references: [id])
+  id                    String        @id @default(auto()) @map("_id") @db.ObjectId
+  currency              String
+  amount                Float         @default(0.0)
+  mapleRadCustomerId    String?
+  mapleRadAccountNumber String?
+  mapleRadAccountName   String?
+  mapleRadBankName      String?
+  mapleRadAccountId     String?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  transactions          Transaction[]
+  ownerId               String        @db.ObjectId
+  owner                 User          @relation(fields: [ownerId], references: [id])
 }
 
 model Address {

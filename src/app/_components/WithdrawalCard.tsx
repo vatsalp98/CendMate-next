@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import {
   Card,
   CardContent,
@@ -13,6 +14,7 @@ interface LimitCardProps {
   daily_limit: string;
   weekly_limit: string;
   monthly_limit: string;
+  icon: ReactNode;
 }
 
 export default function LimitCard({
@@ -21,12 +23,16 @@ export default function LimitCard({
   daily_limit,
   weekly_limit,
   monthly_limit,
+  icon,
 }: LimitCardProps) {
   return (
     <Card className="flex-1 shadow-sm hover:shadow-lg dark:shadow-gray-800">
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>Limits</CardDescription>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle>{title}</CardTitle>
+          <CardDescription>Limits</CardDescription>
+        </div>
+        <div>{icon}</div>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-2">

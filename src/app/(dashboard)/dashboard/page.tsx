@@ -1,11 +1,22 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+"use client";
 import MaxWidthWrapper from "~/app/_components/MaxWitdhWrapper";
 import { Button } from "~/components/ui/button";
 import TransactionsList from "~/app/_components/TransactionsList";
 import WalletList from "~/app/_components/WalletsList";
 import DailyLimitTable from "~/app/_components/DailyLimitTable";
 import { ArrowUpRight } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import confetti from "canvas-confetti";
 
 export default function DashboardPage() {
+  const params = useSearchParams();
+  const newUser = params.get("new");
+
+  if (newUser) {
+    void confetti();
+  }
+
   return (
     <>
       <section className="">

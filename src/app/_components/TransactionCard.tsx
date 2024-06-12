@@ -22,7 +22,7 @@ export default function TransactionCard({
     <>
       <Card
         key={item.id}
-        className="flex cursor-pointer flex-row items-center justify-between pr-10 shadow-md transition-all duration-75 hover:shadow-lg"
+        className="flex cursor-pointer flex-row items-center justify-between pr-10 shadow-md transition-all duration-75 hover:shadow-lg dark:shadow-gray-800"
       >
         <div className="flex flex-row items-center pl-4">
           <div>

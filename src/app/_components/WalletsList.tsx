@@ -27,7 +27,7 @@ export default function WalletList() {
   return (
     <>
       <div className="mt-10">
-        <div className="mb-6 flex w-full flex-row justify-between">
+        <div className="mb-6 flex w-full flex-row items-center justify-between">
           <div>
             <h3 className="text-2xl font-semibold">Your Wallets</h3>
             <span className="text-muted-foreground">

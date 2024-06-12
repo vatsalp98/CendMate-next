@@ -2,11 +2,10 @@
 
 import {
   ArrowDown,
-  ArrowUp,
+  ArrowDownCircle,
+  ArrowUpCircle,
   ArrowUpRight,
   Loader2Icon,
-  PlusIcon,
-  RefreshCw,
 } from "lucide-react";
 import { api } from "~/trpc/react";
 import Image from "next/image";
@@ -15,6 +14,8 @@ import LimitCard from "./WithdrawalCard";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import TransactionCard from "./TransactionCard";
+import DepositDialog from "./DepositDialog";
+import ConvertDialog from "./ConvertDialog";
 
 interface WalletDetailsProps {
   id: string;
@@ -24,7 +25,7 @@ export default function WalletDetails({ id }: WalletDetailsProps) {
   const { data: walletData, isLoading: walletLoading } =
     api.wallet.getWalletById.useQuery({ id });
 
-  const { data: transactionsData } =
+  const { data: transactionsData, refetch: refetchTransactions } =
     api.transactions.getTransactionsByWallet.useQuery({ id });
 
   if (walletLoading) {
@@ -41,7 +42,7 @@ export default function WalletDetails({ id }: WalletDetailsProps) {
     return (
       <>
         <div>
-          <div>
+          <div className="mt-6">
             <div className="flex flex-row items-center justify-between gap-4">
               <div className="flex flex-row items-center gap-2">
                 <Image
@@ -63,26 +64,27 @@ export default function WalletDetails({ id }: WalletDetailsProps) {
             </div>
           </div>
           <div className="my-4 flex w-full flex-row gap-4">
-            <Button className="flex-1 gap-1" variant={"outline"}>
-              <PlusIcon />
-              Add
-            </Button>
-            <Button className="flex-1 gap-1" variant={"outline"}>
-              <RefreshCw />
-              Convert
-            </Button>
-            <Button className="flex-1 gap-1" variant={"outline"}>
+            <DepositDialog
+              wallet_id={id}
+              refetchTransactions={refetchTransactions}
+              currency={walletData.wallet.currency}
+              mapleRadAccountNumber={walletData.wallet.mapleRadAccountNumber!}
+            />
+            <ConvertDialog currency={walletData.wallet.currency} />
+
+            {/* <Button className="flex-1 gap-1" variant={"outline"}>
               <ArrowUp />
               Send
-            </Button>
+            </Button> */}
             <Button className="flex-1 gap-1" variant={"outline"}>
               <ArrowDown />
-              Receive
+              Withdraw
             </Button>
           </div>
-          <Separator className="my-5" />
-          <div className="mt-3 flex w-full flex-row gap-2">
+
+          <div className="mt-3 flex w-full flex-row gap-4">
             <LimitCard
+              icon={<ArrowDownCircle className="text-primary" />}
               title="Deposit"
               used={0}
               daily_limit={formatCurrency(
@@ -100,6 +102,7 @@ export default function WalletDetails({ id }: WalletDetailsProps) {
             />
             <LimitCard
               title="Withdrawal"
+              icon={<ArrowUpCircle className="text-primary" />}
               used={0}
               daily_limit={formatCurrency(
                 walletData.wallet.currency,

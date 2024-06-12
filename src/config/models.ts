@@ -1,71 +1,140 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export interface Address {
-  _id: string;
-  addressLine1: string;
-  apartment: string;
-  city: string;
-  state: string;
-  country: string;
-  countryCode: string;
-  postal: string;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
+export interface WebhookResponse {
+  data: {
+    backup_code_enabled: boolean;
+    banned: boolean;
+    create_organization_enabled: boolean;
+    created_at: number;
+    delete_self_enabled: boolean;
+    email_addresses: EmailAddress[];
+    external_accounts: unknown[];
+    external_id: string | null;
+    first_name: string;
+    has_image: boolean;
+    id: string;
+    image_url: string;
+    last_active_at: number;
+    last_name: string;
+    last_sign_in_at: number | null;
+    locked: boolean;
+    lockout_expires_in_seconds: number | null;
+    mfa_disabled_at: number | null;
+    mfa_enabled_at: number | null;
+    object: string;
+    passkeys: unknown[];
+    password_enabled: boolean;
+    phone_numbers: PhoneNumber[];
+    primary_email_address_id: string;
+    primary_phone_number_id: string | null;
+    primary_web3_wallet_id: string | null;
+    private_metadata: Record<string, unknown>;
+    profile_image_url: string;
+    public_metadata: Record<string, unknown>;
+    saml_accounts: unknown[];
+    totp_enabled: boolean;
+    two_factor_enabled: boolean;
+    unsafe_metadata: Record<string, unknown>;
+    updated_at: number;
+    username: string | null;
+    verification_attempts_remaining: number;
+    web3_wallets: unknown[];
+  };
+  event_attributes: {
+    http_request: {
+      client_ip: string;
+      user_agent: string;
+    };
+  };
+  object: string;
+  type: string;
 }
 
-export interface Transactions {
-  fincra: {
+interface EmailAddress {
+  created_at: number;
+  email_address: string;
+  id: string;
+  linked_to: unknown[];
+  object: string;
+  reserved: boolean;
+  updated_at: number;
+  verification: {
+    attempts: number;
+    expire_at: number;
+    status: string;
+    strategy: string;
+  };
+}
+
+interface PhoneNumber {
+  backup_codes: unknown;
+  created_at: number;
+  default_second_factor: boolean;
+  id: string;
+  linked_to: unknown[];
+  object: string;
+  phone_number: string;
+  reserved: boolean;
+  reserved_for_second_factor: boolean;
+  updated_at: number;
+  verification: unknown;
+}
+
+export interface MobileMoneyOperator {
+  name: string;
+  value: string;
+  icon: string;
+}
+
+// Define the structure of the entire response
+export interface OperatorResponseModel {
+  status: boolean;
+  message: string;
+  data: MobileMoneyOperator[];
+}
+
+export interface MapleRadCustomerData {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  country: string;
+  status: string;
+  tier: number;
+  created_at: string;
+  updated_at: string;
+}
+
+// Define the structure of the entire response
+export interface MapleRadResponseModel {
+  status: boolean;
+  message: string;
+  data: MapleRadCustomerData;
+}
+
+export interface MapleRadUpgradeResponse {
+  status: boolean;
+  message: string;
+}
+
+export interface AccountCreationResponse {
+  status: boolean;
+  message: string;
+  data: VirtualAccountData;
+}
+
+interface VirtualAccountData {
+  id: string;
+  bank_name: string;
+  account_number: string;
+  account_name: string;
+  currency: string;
+  created_at: string; // ISO 8601 date string
+}
+
+export interface FincraApiResponse {
+  status: boolean;
+  message: string;
+  data: {
     link: string;
     payCode: string;
   };
-  amount: number;
-  status: string;
-  comment: string;
-  _id: string;
-  user: {
-    _id: string;
-    fName: string;
-    lName: string;
-  };
-  wallet: {
-    _id: string;
-    currency: string;
-  };
-  currency: string;
-  type: string;
-  referenceId: string;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-}
-
-export interface Wallet {
-  amount: number;
-  beneficiaries: any[];
-  _id: string;
-  user: string;
-  currency: string;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-}
-
-export interface User {
-  _id: string;
-  fName: string;
-  lName: string;
-  email: string;
-  phoneNumber: string;
-  country: string;
-  isVerified: boolean;
-  isSubmitted: boolean;
-  userName: string;
-  userClass: string;
-  wallets: Wallet[];
-  image: string;
-  isAdmin: boolean;
-  address: Address;
-  token: string;
-  clientId: string;
-  status: string;
 }
