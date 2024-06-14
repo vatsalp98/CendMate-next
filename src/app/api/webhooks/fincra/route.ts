@@ -32,7 +32,7 @@ export async function POST(req: Request) {
   }
 
   // console.log("BODY", JSON.stringify(await req.json()));
-  console.log("BODY", req);
+  console.log("BODY", await req.json());
   // // Get the body
   // const payload = (await req.json()) as FincraChargeEvent;
 
