@@ -79,7 +79,6 @@ export default function DepositDialog({
   });
 
   const onSubmit = (values: TFincraDepositFormValues) => {
-    console.log("Vlayues", values);
     fincraDepositMutation.mutate({
       amount: values.amount,
       wallet_id: wallet_id,

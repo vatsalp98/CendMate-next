@@ -1,6 +1,12 @@
 "use client";
 
-import { ArrowUpDownIcon, Home, User2Icon, Wallet2 } from "lucide-react";
+import {
+  ArrowUpDownIcon,
+  BadgeDollarSignIcon,
+  Home,
+  User2Icon,
+  Wallet2,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Separator } from "~/components/ui/separator";
@@ -8,7 +14,6 @@ import { cn } from "~/lib/utils";
 
 export default function SideBarNav() {
   const pathName = usePathname();
-  console.log(pathName);
 
   return (
     <>
@@ -62,6 +67,19 @@ export default function SideBarNav() {
           Transactions
         </Link>
         <Separator className="my-4" />
+
+        <Link
+          href="/exchange"
+          className={cn(
+            "my-2 flex items-center gap-3 rounded-lg px-3 py-3 font-semibold",
+            pathName.startsWith("/exchange")
+              ? "bg-blue-100 text-primary transition-all hover:text-primary"
+              : "text-muted-foreground transition-all hover:bg-gray-100 hover:text-primary",
+          )}
+        >
+          <BadgeDollarSignIcon className="h-4 w-4" />
+          Exchange Rate
+        </Link>
       </nav>
     </>
   );

@@ -61,14 +61,11 @@ model Limit {
 }
 
 model ExchangeRate {
-  id               String   @id @default(auto()) @map("_id") @db.ObjectId
-  currency         String
-  fixedRateEnabled Boolean  @default(true)
-  fixedBuyRate     Float    @default(0.0)
-  fixedSellRate    Float    @default(0.0)
-  floatingMargin   Float    @default(0.0)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  currency   String
+  marketRate Float
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model Transaction {

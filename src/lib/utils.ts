@@ -1,20 +1,7 @@
+import { Wallet } from "@prisma/client";
 import { type ClassValue, clsx } from "clsx";
 import type { Metadata } from "next";
 import { twMerge } from "tailwind-merge";
-
-// export async function hashPassword(plainPassword: string): Promise<string> {
-//   const saltRounds = 10; // Number of salt rounds
-//   const hashedPassword = await bcrypt.hash(plainPassword, saltRounds);
-//   return hashedPassword;
-// }
-
-// export async function checkPassword(
-//   plainPassword: string,
-//   hashedPassword: string,
-// ): Promise<boolean> {
-//   const match = await bcrypt.compare(plainPassword, hashedPassword);
-//   return match;
-// }
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -46,6 +33,23 @@ export function formatCurrency(currency: string, amount: number): string {
 
   return `${symbol} ${formattedAmount}`;
 }
+
+export function getCurrencySymbol(currency: string): string {
+  const currencySymbols: Record<string, string> = {
+    USD: "$",
+    CAD: "C$",
+    GBP: "£",
+    EUR: "€",
+    GHS: "₵",
+    TZS: "TSh",
+    KES: "KSh",
+    NGN: "₦",
+  };
+
+  return currencySymbols[currency] ?? "";
+}
+
+export const numberRegex = /^\d+(\.\d{1,2})?$/;
 
 export function constructMetadata({
   title = "Cendmate Inc.",
@@ -95,7 +99,41 @@ export function isFincraCurrency(currency: string) {
 }
 
 export function isNiumCurrency(currency: string) {
-  return ["USD", "CAD", "GBP", "AUD"].includes(currency);
+  return ["USD", "CAD", "GBP"].includes(currency);
+}
+
+export function conversionCurrencies(currency: string, wallets: Wallet[]) {
+  const allCurrencies = [
+    "USD",
+    "CAD",
+    "EUR",
+    "GBP",
+    "NGN",
+    "KES",
+    "GHS",
+    "TZS",
+  ];
+  const westernCurrencies = ["CAD", "EUR", "USD", "GBP"];
+
+  const supportedConversions: Record<string, string[]> = {
+    USD: allCurrencies.filter((item) => item != "USD"),
+    CAD: allCurrencies.filter((item) => item != "CAD"),
+    EUR: allCurrencies.filter((item) => item != "EUR"),
+    GBP: allCurrencies.filter((item) => item != "GBP"),
+    GHS: westernCurrencies,
+    NGN: westernCurrencies,
+    KES: westernCurrencies,
+    TZS: westernCurrencies,
+  };
+
+  const availableCurrencies = supportedConversions[currency];
+  if (!availableCurrencies) {
+    return [];
+  }
+
+  return wallets.filter((wallet) =>
+    availableCurrencies.includes(wallet.currency),
+  );
 }
 
 export function formatDate(date: Date) {

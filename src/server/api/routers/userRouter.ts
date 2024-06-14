@@ -131,7 +131,7 @@ export const userRouter = createTRPCRouter({
         });
       }
 
-      await ctx.db.user.update({
+      const user = await ctx.db.user.update({
         where: {
           id: userDb.id,
         },
@@ -157,9 +157,10 @@ export const userRouter = createTRPCRouter({
         publicMetadata: {
           onboardingComplete: true,
           db_id: userDb.id,
+          role: user.role,
         },
       });
 
-      return userDb;
+      return user;
     }),
 });

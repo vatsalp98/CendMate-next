@@ -3,6 +3,7 @@
 import { Loader2 } from "lucide-react";
 import { api } from "~/trpc/react";
 import TransactionCard from "./TransactionCard";
+import Link from "next/link";
 
 interface TransactionListProps {
   limit?: number;
@@ -33,11 +34,11 @@ export default function TransactionsList({ limit }: TransactionListProps) {
           </div>
         )}
         <div className="flex flex-col gap-4">
-          {transactions.data
-            ?.slice(0, limit)
-            .map((item) => (
+          {transactions.data?.slice(0, limit).map((item) => (
+            <Link key={item.id} href={`/transactions/${item.id}`}>
               <TransactionCard item={item} key={item.id} sender={item.sender} />
-            ))}
+            </Link>
+          ))}
         </div>
       </>
     );

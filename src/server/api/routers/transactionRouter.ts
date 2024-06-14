@@ -29,6 +29,33 @@ export const transactionRouters = createTRPCRouter({
     return transactions;
   }),
 
+  getTransactionById: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const transaction = await ctx.db.transaction.findUnique({
+        where: {
+          id: input.id,
+        },
+        include: {
+          wallet: true,
+          sender: true,
+        },
+      });
+
+      if (!transaction) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Transaction details not found.",
+        });
+      }
+
+      return transaction;
+    }),
+
   getTransactionsByWallet: privateProcedure
     .input(
       z.object({

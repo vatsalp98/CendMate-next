@@ -18,6 +18,7 @@ export const env = createEnv({
     MAPLERAD_URL: z.string(),
     MAPLERAD_SK: z.string(),
     COMPLYCUBE_KEY: z.string(),
+    FINCRA_WEBHOOK_SECRET: z.string(),
   },
 
   /**
@@ -50,6 +51,7 @@ export const env = createEnv({
     FINCRA_API_KEY: process.env.FINCRA_API_KEY,
     FINCRA_X_PUB_KEY: process.env.FINCRA_X_PUB_KEY,
     FINCRA_BUSINESS_ID: process.env.FINCRA_BUSINESS_ID,
+    FINCRA_WEBHOOK_SECRET: process.env.FINCRA_WEBHOOK_SECRET,
     // MapleRad
     MAPLERAD_URL: process.env.MAPLERAD_URL,
     MAPLERAD_SK: process.env.MAPLERAD_SK,

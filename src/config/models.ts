@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-redundant-type-constituents */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface WebhookResponse {
   data: {
     backup_code_enabled: boolean;
@@ -137,4 +139,64 @@ export interface FincraApiResponse {
     link: string;
     payCode: string;
   };
+}
+
+// FINCRA WEBHOOK RESPONSE
+interface Authorization {
+  mode: string | null;
+  redirect: string | null;
+  metadata: any | null;
+}
+
+interface Customer {
+  name: string;
+  email: string;
+  phoneNumber: string;
+}
+
+interface VirtualAccount {
+  bankName: string;
+  id: string;
+  bankCode: string;
+  accountName: string;
+  accountNumber: string;
+  sessionId: string;
+  channelName: string;
+  payerAccountNumber: string;
+  payerAccountName: string;
+  payerBankName: string;
+  payerBankCode: string;
+  expiresAt: string;
+  business: string;
+}
+
+interface Data {
+  chargeReference: string;
+  amountToSettle: number;
+  id: number;
+  authorization: Authorization;
+  auth_model: string | null;
+  amount: number;
+  amountExpected: number;
+  amountReceived: number;
+  varianceType: string | null;
+  currency: string;
+  fee: number;
+  vat: number;
+  message: string;
+  actionRequired: string | null;
+  status: string;
+  reference: string;
+  description: string;
+  type: string;
+  customer: Customer;
+  metadata: Record<string, unknown>;
+  settlementDestination: string;
+  settlementTime: string;
+  virtualAccount: VirtualAccount;
+}
+
+export interface FincraChargeEvent {
+  event: string;
+  data: Data;
 }
