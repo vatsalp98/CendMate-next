@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,8 +20,6 @@ import { api } from "~/trpc/react";
 
 export default function ExchangeRateTable() {
   const { data: user, isLoading: userLoading } = api.user.getUserDb.useQuery();
-
-  const { data: rateData } = api.exchange.getExchangeRates.useQuery();
 
   const exchangeRateSchema = z.object({
     EUR: z.string().regex(numberRegex, {
@@ -49,7 +45,7 @@ export default function ExchangeRateTable() {
   type TExchangeRateValues = z.infer<typeof exchangeRateSchema>;
 
   const exchangeMutation = api.exchange.createExchangeRate.useMutation({
-    onSuccess: (data) => {
+    onSuccess: () => {
       form.reset();
     },
   });

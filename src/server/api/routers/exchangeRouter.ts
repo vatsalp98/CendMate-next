@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "../trpc";
-import { ExchangeRate } from "@prisma/client";
 
 export const exchangeRouter = createTRPCRouter({
   getExchangeRates: privateProcedure.query(async ({ ctx }) => {
