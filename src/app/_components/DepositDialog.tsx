@@ -33,7 +33,7 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { Separator } from "~/components/ui/separator";
-import { isFincraCurrency } from "~/lib/utils";
+import { isFincraCurrency, validateDecimal } from "~/lib/utils";
 import { api } from "~/trpc/react";
 
 interface DepositDialogProps {
@@ -76,6 +76,7 @@ export default function DepositDialog({
 
   const form = useForm<TFincraDepositFormValues>({
     resolver: zodResolver(fincraDepositFormSchema),
+    mode: "onChange",
   });
 
   const onSubmit = (values: TFincraDepositFormValues) => {
@@ -201,8 +202,17 @@ export default function DepositDialog({
                             <FormLabel>Amount</FormLabel>
                             <FormControl>
                               <Input
-                                {...field}
-                                placeholder="Enter amount to deposit"
+                                value={field.value}
+                                onChange={(e) => {
+                                  if (validateDecimal(e.target.value)) {
+                                    field.onChange(e);
+                                  } else {
+                                    form.setError("amount", {
+                                      message: "Invalid Amount",
+                                    });
+                                  }
+                                }}
+                                placeholder="00.00"
                               />
                             </FormControl>
                             <FormDescription>

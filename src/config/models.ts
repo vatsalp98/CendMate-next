@@ -190,7 +190,10 @@ interface Data {
   description: string;
   type: string;
   customer: Customer;
-  metadata: Record<string, unknown>;
+  metadata: {
+    phone: string;
+    operator: string;
+  };
   settlementDestination: string;
   settlementTime: string;
   virtualAccount: VirtualAccount;

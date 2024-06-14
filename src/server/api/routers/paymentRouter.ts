@@ -79,7 +79,6 @@ export const paymentRouter = createTRPCRouter({
           headers,
         },
       );
-      console.log("Response FINCRA", response.data);
 
       if (!response.data.status) {
         throw new TRPCError({

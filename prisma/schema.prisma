@@ -77,7 +77,7 @@ model Transaction {
   comment               String            @default("")
   completedAt           DateTime?
   bankDetails           String?
-  referenceId           String
+  referenceId           String            @unique
   amountToSettle        Float?
   mapleRad              Json?
   fincraPayCode         String?

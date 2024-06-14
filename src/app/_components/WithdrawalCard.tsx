@@ -1,3 +1,4 @@
+import type { Transaction } from "@prisma/client";
 import type { ReactNode } from "react";
 import {
   Card,
@@ -7,24 +8,33 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import { Progress } from "~/components/ui/progress";
+import { formatCurrency, getTotalTransactions } from "~/lib/utils";
 
 interface LimitCardProps {
   title: string;
-  used: number;
-  daily_limit: string;
-  weekly_limit: string;
-  monthly_limit: string;
+  transactions: Transaction[];
+  type: string;
+  daily_limit: number;
+  weekly_limit: number;
+  monthly_limit: number;
+  currency: string;
   icon: ReactNode;
 }
 
 export default function LimitCard({
   title,
-  used,
+  transactions,
+  type,
   daily_limit,
   weekly_limit,
   monthly_limit,
   icon,
+  currency,
 }: LimitCardProps) {
+  const dailyTotal = getTotalTransactions(transactions, "daily", type);
+  const weeklyTotal = getTotalTransactions(transactions, "weekly", type);
+  const monthlyTotal = getTotalTransactions(transactions, "monthly", type);
+
   return (
     <Card className="flex-1 shadow-sm hover:shadow-lg dark:shadow-gray-800">
       <CardHeader className="flex flex-row items-center justify-between">
@@ -42,10 +52,10 @@ export default function LimitCard({
                 Daily
               </span>
               <span className="text-sm font-semibold text-muted-foreground">
-                {daily_limit}
+                {formatCurrency(currency, daily_limit)}
               </span>
             </div>
-            <Progress value={used + 1} />
+            <Progress value={(dailyTotal / daily_limit) * 100} />
           </div>
           <div>
             <div className="flex w-full flex-row justify-between">
@@ -53,10 +63,10 @@ export default function LimitCard({
                 Weekly
               </span>
               <span className="text-sm font-semibold text-muted-foreground">
-                {weekly_limit}
+                {formatCurrency(currency, weekly_limit)}
               </span>
             </div>
-            <Progress value={used + 1} />
+            <Progress value={(weeklyTotal / weekly_limit) * 100} />
           </div>
           <div>
             <div className="flex w-full flex-row justify-between">
@@ -64,10 +74,10 @@ export default function LimitCard({
                 Monthly
               </span>
               <span className="text-sm font-semibold text-muted-foreground">
-                {monthly_limit}
+                {formatCurrency(currency, monthly_limit)}
               </span>
             </div>
-            <Progress value={used + 1} />
+            <Progress value={(monthlyTotal / monthly_limit) * 100} />
           </div>
         </div>
       </CardContent>

@@ -3,14 +3,19 @@
 import { Loader2 } from "lucide-react";
 import { api } from "~/trpc/react";
 import TransactionCard from "./TransactionCard";
-import Link from "next/link";
 
 interface TransactionListProps {
   limit?: number;
+  wallet_id?: string;
 }
 
-export default function TransactionsList({ limit }: TransactionListProps) {
-  const transactions = api.transactions.getTransactions.useQuery();
+export default function TransactionsList({
+  limit,
+  wallet_id,
+}: TransactionListProps) {
+  const transactions = api.transactions.getTransactions.useQuery({
+    wallet_id: wallet_id,
+  });
 
   if (transactions.isLoading) {
     return (
@@ -34,11 +39,11 @@ export default function TransactionsList({ limit }: TransactionListProps) {
           </div>
         )}
         <div className="flex flex-col gap-4">
-          {transactions.data?.slice(0, limit).map((item) => (
-            <Link key={item.id} href={`/transactions/${item.id}`}>
+          {transactions.data
+            ?.slice(0, limit)
+            .map((item) => (
               <TransactionCard item={item} key={item.id} sender={item.sender} />
-            </Link>
-          ))}
+            ))}
         </div>
       </>
     );

@@ -1,9 +1,7 @@
-import { Webhook } from "svix";
 import { headers } from "next/headers";
-import type { WebhookEvent } from "@clerk/nextjs/server";
 import { env } from "~/env";
 import { db } from "~/server/db";
-import type { FincraChargeEvent, WebhookResponse } from "~/config/models";
+import type { FincraChargeEvent } from "~/config/models";
 import crypto from "crypto";
 
 export async function POST(req: Request) {
@@ -15,9 +13,11 @@ export async function POST(req: Request) {
       "Please add WEBHOOK_SECRET from Fincra Dashboard to .env or .env.local",
     );
   }
+  const payload = (await req.json()) as FincraChargeEvent;
+
   const encryptedData = crypto
     .createHmac("SHA512", WEBHOOK_SECRET)
-    .update(JSON.stringify(await req.json()))
+    .update(JSON.stringify(payload))
     .digest("hex");
 
   // Get the headers
@@ -31,8 +31,68 @@ export async function POST(req: Request) {
     });
   }
 
-  // console.log("BODY", JSON.stringify(await req.json()));
-  console.log("BODY", await req.json());
+  const { event, data } = payload;
+
+  if (event === "charge.successful") {
+    const transaction = await db.transaction.findUnique({
+      where: {
+        referenceId: data.reference,
+      },
+      include: {
+        wallet: true,
+      },
+    });
+
+    if (!transaction) {
+      return new Response("Transaction not found.", {
+        status: 404,
+      });
+    }
+
+    if (data.amountToSettle === transaction.amount) {
+      await db.transaction.update({
+        where: {
+          id: transaction.id,
+        },
+        data: {
+          comment: "pay-in completed",
+          status: "SUCCESS",
+          fincraChargeReference: data.chargeReference,
+          fincraPhone: data.metadata.phone,
+          fincraPhoneOperator: data.metadata.operator,
+          wallet: {
+            update: {
+              amount: {
+                increment: data.amountToSettle,
+              },
+            },
+          },
+        },
+      });
+
+      return new Response("Fincra webhook received and processed", {
+        status: 200,
+      });
+    } else {
+      return new Response("Invalid amount to settle.", {
+        status: 400,
+      });
+    }
+  } else if (event === "charge.failed") {
+    await db.transaction.update({
+      where: {
+        referenceId: data.reference,
+      },
+      data: {
+        status: "FAILED",
+        comment: "pay-in failure, failed charge webhook received.",
+      },
+    });
+
+    return new Response("Fincra webhook received and processed", {
+      status: 200,
+    });
+  }
   // // Get the body
   // const payload = (await req.json()) as FincraChargeEvent;
 

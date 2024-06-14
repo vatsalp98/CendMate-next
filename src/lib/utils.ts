@@ -1,4 +1,4 @@
-import { Wallet } from "@prisma/client";
+import type { Transaction, Wallet } from "@prisma/client";
 import { type ClassValue, clsx } from "clsx";
 import type { Metadata } from "next";
 import { twMerge } from "tailwind-merge";
@@ -9,6 +9,59 @@ export function cn(...inputs: ClassValue[]) {
 
 export function formatMoney(amount: number): string {
   return amount.toFixed(2);
+}
+
+function filterTransactions(
+  transactions: Transaction[],
+  startDate: Date,
+  endDate: Date,
+  type: string,
+): Transaction[] {
+  const successTransactions = transactions
+    .filter((item) => item.status === "SUCCESS")
+    .filter((item) => item.type === type);
+  return successTransactions.filter(
+    (transaction) =>
+      transaction.updatedAt >= startDate && transaction.updatedAt <= endDate,
+  );
+}
+
+export function getTotalTransactions(
+  transactions: Transaction[],
+  rangeType: "daily" | "weekly" | "monthly",
+  type: string,
+): number {
+  const now = new Date();
+  let startDate: Date;
+  const endDate: Date = now;
+
+  switch (rangeType) {
+    case "daily":
+      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      break;
+    case "weekly":
+      const firstDayOfWeek = now.getDate() - now.getDay();
+      startDate = new Date(now.getFullYear(), now.getMonth(), firstDayOfWeek);
+      break;
+    case "monthly":
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+      break;
+    default:
+      throw new Error("Range type must be 'daily', 'weekly', or 'monthly'");
+  }
+
+  const filteredTransactions = filterTransactions(
+    transactions,
+    startDate,
+    endDate,
+    type,
+  );
+  const totalAmount = filteredTransactions.reduce(
+    (total, transaction) => total + transaction.amount,
+    0,
+  );
+
+  return totalAmount;
 }
 
 export function formatCurrency(currency: string, amount: number): string {
@@ -134,6 +187,12 @@ export function conversionCurrencies(currency: string, wallets: Wallet[]) {
   return wallets.filter((wallet) =>
     availableCurrencies.includes(wallet.currency),
   );
+}
+
+export function validateDecimal(input: string) {
+  // This regex allows numbers with up to 2 decimal places
+  const regex = /^\d+(\.\d{0,2})?$/;
+  return regex.test(input);
 }
 
 export function formatDate(date: Date) {

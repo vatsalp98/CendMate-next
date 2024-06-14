@@ -3,31 +3,41 @@ import { createTRPCRouter, privateProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 
 export const transactionRouters = createTRPCRouter({
-  getTransactions: privateProcedure.query(async ({ ctx }) => {
-    const user = await ctx.db.user.findUnique({
-      where: {
-        uid: ctx.userId,
-      },
-    });
-
-    if (!user) {
-      throw new TRPCError({
-        code: "UNAUTHORIZED",
-        message: "No user found in DB",
+  getTransactions: privateProcedure
+    .input(
+      z.object({
+        wallet_id: z.string().optional(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const user = await ctx.db.user.findUnique({
+        where: {
+          uid: ctx.userId,
+        },
       });
-    }
 
-    const transactions = await ctx.db.transaction.findMany({
-      where: {
-        senderId: user.id,
-      },
-      include: {
-        sender: true,
-      },
-    });
+      if (!user) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "No user found in DB",
+        });
+      }
 
-    return transactions;
-  }),
+      const transactions = await ctx.db.transaction.findMany({
+        orderBy: {
+          updatedAt: "desc",
+        },
+        where: {
+          senderId: user.id,
+          walletId: input.wallet_id,
+        },
+        include: {
+          sender: true,
+        },
+      });
+
+      return transactions;
+    }),
 
   getTransactionById: privateProcedure
     .input(
@@ -83,6 +93,9 @@ export const transactionRouters = createTRPCRouter({
       }
 
       const transactions = await ctx.db.transaction.findMany({
+        orderBy: {
+          updatedAt: "desc",
+        },
         where: {
           currency: wallet.currency,
           senderId: user.id,

@@ -4,18 +4,18 @@ import {
   ArrowDown,
   ArrowDownCircle,
   ArrowUpCircle,
-  ArrowUpRight,
   Loader2Icon,
 } from "lucide-react";
 import { api } from "~/trpc/react";
 import Image from "next/image";
 import { formatCurrency } from "~/lib/utils";
 import LimitCard from "./WithdrawalCard";
-import { Button } from "~/components/ui/button";
+import { Button, buttonVariants } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
-import TransactionCard from "./TransactionCard";
 import DepositDialog from "./DepositDialog";
 import ConvertDialog from "./ConvertDialog";
+import Link from "next/link";
+import TransactionCard from "./TransactionCard";
 
 interface WalletDetailsProps {
   id: string;
@@ -38,7 +38,7 @@ export default function WalletDetails({ id }: WalletDetailsProps) {
     );
   }
 
-  if (walletData)
+  if (walletData && transactionsData) {
     return (
       <>
         <div>
@@ -86,36 +86,22 @@ export default function WalletDetails({ id }: WalletDetailsProps) {
             <LimitCard
               icon={<ArrowDownCircle className="text-primary" />}
               title="Deposit"
-              used={0}
-              daily_limit={formatCurrency(
-                walletData.wallet.currency,
-                walletData.limit?.deposit_daily ?? 0,
-              )}
-              weekly_limit={formatCurrency(
-                walletData.wallet.currency,
-                walletData.limit?.deposit_weekly ?? 0,
-              )}
-              monthly_limit={formatCurrency(
-                walletData.wallet.currency,
-                walletData.limit?.deposit_monthly ?? 0,
-              )}
+              currency={walletData.wallet.currency}
+              transactions={transactionsData}
+              daily_limit={walletData.limit?.deposit_daily ?? 0}
+              type="pay-in"
+              weekly_limit={walletData.limit?.deposit_weekly ?? 0}
+              monthly_limit={walletData.limit?.deposit_monthly ?? 0}
             />
             <LimitCard
               title="Withdrawal"
+              currency={walletData.wallet.currency}
               icon={<ArrowUpCircle className="text-primary" />}
-              used={0}
-              daily_limit={formatCurrency(
-                walletData.wallet.currency,
-                walletData.limit?.withdraw_daily ?? 0,
-              )}
-              weekly_limit={formatCurrency(
-                walletData.wallet.currency,
-                walletData.limit?.withdraw_weekly ?? 0,
-              )}
-              monthly_limit={formatCurrency(
-                walletData.wallet.currency,
-                walletData.limit?.withdraw_monthly ?? 0,
-              )}
+              transactions={transactionsData}
+              type="pay-out"
+              daily_limit={walletData.limit?.withdraw_daily ?? 0}
+              weekly_limit={walletData.limit?.withdraw_weekly ?? 0}
+              monthly_limit={walletData.limit?.withdraw_monthly ?? 0}
             />
           </div>
           <Separator className="my-5" />
@@ -128,13 +114,18 @@ export default function WalletDetails({ id }: WalletDetailsProps) {
                 </span>
               </div>
               <div>
-                <Button variant={"outline"} className="gap-1">
-                  View All
-                  <ArrowUpRight />
-                </Button>
+                <Link
+                  href="/transactions"
+                  className={buttonVariants({
+                    variant: "link",
+                    className: "gap-1",
+                  })}
+                >
+                  View All &rarr;
+                </Link>
               </div>
             </div>
-            <div className="mt-5">
+            <div className="mt-5 flex flex-col gap-4">
               {transactionsData?.length === 0 && (
                 <div className="flex w-full flex-col items-center justify-center rounded-lg border border-dashed py-10">
                   <div className="flex flex-col items-center justify-center">
@@ -161,4 +152,5 @@ export default function WalletDetails({ id }: WalletDetailsProps) {
         </div>
       </>
     );
+  }
 }

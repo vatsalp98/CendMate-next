@@ -29,6 +29,7 @@ export const env = createEnv({
   client: {
     NEXT_PUBLIC_MAPBOX_KEY: z.string(),
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),
+    NEXT_PUBLIC_URL: z.string(),
   },
 
   /**
@@ -37,6 +38,7 @@ export const env = createEnv({
    */
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
+    NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_URL,
     // DB URL
     DATABASE_URI: process.env.DATABASE_URI,
     // MAPBOX
