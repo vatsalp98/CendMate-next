@@ -1,8 +1,12 @@
-import { PlusIcon } from "lucide-react";
+"use client";
+
+import { useState } from "react";
 import MaxWidthWrapper from "~/app/_components/MaxWitdhWrapper";
 import { Button } from "~/components/ui/button";
 
 export default function RecipientsPage() {
+  const [step, setStep] = useState("initial");
+
   return (
     <>
       <section>
@@ -15,12 +19,27 @@ export default function RecipientsPage() {
                   List of all your recipients
                 </span>
               </div>
-              <Button>
-                <PlusIcon />
-                Add Recipient
-              </Button>
+              <Button onClick={() => setStep("new")}></Button>
             </div>
-            <div></div>
+            <div>{step === "initial" && <div>Initila</div>}</div>
+            <div>
+              {step === "new" && (
+                <div>
+                  {/* Ask Currency */}
+                  NEw Reciupient
+                  <Button onClick={() => setStep("form")}></Button>
+                </div>
+              )}
+            </div>
+            <div>
+              {step === "form" && (
+                <div>
+                  {/* Form Beneficiary*/}
+                  NEw Reciupient
+                  <Button onClick={() => setStep("form")}></Button>
+                </div>
+              )}
+            </div>
           </div>
         </MaxWidthWrapper>
       </section>

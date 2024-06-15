@@ -20,6 +20,10 @@ export const env = createEnv({
     COMPLYCUBE_KEY: z.string(),
     FINCRA_WEBHOOK_SECRET: z.string(),
     COMPLYCUBE_WEBHOOK_SECRET: z.string(),
+    NIUM_CLIENT_ID: z.string(),
+    NIUM_CUSTOMER_HASH_ID: z.string(),
+    NIUM_URL: z.string(),
+    NIUM_API_KEY: z.string(),
   },
 
   /**
@@ -61,6 +65,11 @@ export const env = createEnv({
     // COMPLYCUBE
     COMPLYCUBE_KEY: process.env.COMPLYCUBE_KEY,
     COMPLYCUBE_WEBHOOK_SECRET: process.env.COMPLYCUBE_WEBHOOK_SECRET,
+    // NIUM
+    NIUM_CLIENT_ID: process.env.NIUM_CLIENT_ID,
+    NIUM_CUSTOMER_HASH_ID: process.env.NIUM_CUSTOMER_HASH_ID,
+    NIUM_URL: process.env.NIUM_URL,
+    NIUM_API_KEY: process.env.NIUM_API_KEY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

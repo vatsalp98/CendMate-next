@@ -44,6 +44,7 @@ model User {
   address                 Address?
   wallets                 Wallet[]
   transactions            Transaction[]
+  recipients              Recipient[]
   limits                  Limit[]
 }
 
@@ -111,8 +112,21 @@ model Wallet {
   createdAt             DateTime      @default(now())
   updatedAt             DateTime      @updatedAt
   transactions          Transaction[]
+  recipients            Recipient[]
   ownerId               String        @db.ObjectId
   owner                 User          @relation(fields: [ownerId], references: [id])
+}
+
+model Recipient {
+  id                      String @id @default(auto()) @map("_id") @db.ObjectId
+  beneficiaryHashId       String @unique
+  beneficiaryBankName     String
+  beneficiaryAcountNumber String
+  beneficiaryPayoutMethod String
+  ownerId                 String @db.ObjectId
+  owner                   User   @relation(fields: [ownerId], references: [id])
+  walletId                String @db.ObjectId
+  wallet                  Wallet @relation(fields: [walletId], references: [id])
 }
 
 model Address {
