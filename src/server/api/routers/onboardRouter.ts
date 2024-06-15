@@ -29,7 +29,7 @@ export const onboardRouter = createTRPCRouter({
       ],
       successUrl: `${env.NEXT_PUBLIC_URL}/dashboard?new=true`,
       cancelUrl: `${env.NEXT_PUBLIC_URL}/kyc`,
-      theme: "dark",
+      theme: "light",
     });
 
     return session as unknown as ComplySession;

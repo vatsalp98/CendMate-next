@@ -62,6 +62,7 @@ export default function KYCCard() {
         </Card>
       )}
       {verifySuccess && <Loader2 className="animate-spin" />}
+      <div id="complycube-mount"></div>
     </>
   );
 }
