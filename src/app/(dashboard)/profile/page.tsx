@@ -92,7 +92,11 @@ export default function ProfilePage() {
               <Card className="flex-1">
                 <CardHeader className="flex flex-row items-center justify-center">
                   <Avatar className="h-20 w-20">
-                    <AvatarImage src={userData.avatar} alt="user Avatar" />
+                    <AvatarImage
+                      src={userData.avatar}
+                      alt="user Avatar"
+                      className="bg-gray-300 p-1 dark:bg-white"
+                    />
                     <AvatarFallback>
                       {userData.firstName[0]}
                       {userData.lastName[0]}

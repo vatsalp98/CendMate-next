@@ -4,12 +4,22 @@ import Link from "next/link";
 import { ModeToggle } from "../_components/ThemeToggle";
 import { UserButton } from "@clerk/nextjs";
 import DashSideBar from "../_components/DashSideBar";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
 export default async function DashboardLayout({
   children,
 }: {
   children: ReactNode;
 }) {
+  if (!auth().sessionClaims?.metadata.kycComplete) {
+    redirect("/kyc");
+  }
+
+  if (!auth().sessionClaims?.metadata.onboardingComplete) {
+    redirect("/welcome");
+  }
+
   return (
     <>
       <section className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">

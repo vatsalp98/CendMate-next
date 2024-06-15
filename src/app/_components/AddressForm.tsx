@@ -45,7 +45,7 @@ export default function AddressForm() {
 
   const onboardMutation = api.user.onBoardUser.useMutation({
     onSuccess: () => {
-      router.push("/dashboard?new=true");
+      router.push("/kyc");
     },
     onError: (error) => {
       toast.error(error.message);

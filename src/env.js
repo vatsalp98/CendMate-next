@@ -19,6 +19,7 @@ export const env = createEnv({
     MAPLERAD_SK: z.string(),
     COMPLYCUBE_KEY: z.string(),
     FINCRA_WEBHOOK_SECRET: z.string(),
+    COMPLYCUBE_WEBHOOK_SECRET: z.string(),
   },
 
   /**
@@ -59,6 +60,7 @@ export const env = createEnv({
     MAPLERAD_SK: process.env.MAPLERAD_SK,
     // COMPLYCUBE
     COMPLYCUBE_KEY: process.env.COMPLYCUBE_KEY,
+    COMPLYCUBE_WEBHOOK_SECRET: process.env.COMPLYCUBE_WEBHOOK_SECRET,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

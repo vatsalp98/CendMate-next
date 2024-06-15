@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2Icon } from "lucide-react";
+import { BanknoteIcon, Loader2Icon, ReceiptText, UserIcon } from "lucide-react";
 import { api } from "~/trpc/react";
 import { cn, formatCurrency } from "~/lib/utils";
 import { Badge } from "~/components/ui/badge";
@@ -47,7 +47,12 @@ export default function TransactionDetailsComponents({
             <div className="my-5">
               <Accordion type="multiple" defaultValue={["item-1"]}>
                 <AccordionItem value="item-1">
-                  <AccordionTrigger>Transaction Details</AccordionTrigger>
+                  <AccordionTrigger>
+                    <div className="flex flex-row gap-2">
+                      <ReceiptText />
+                      Transaction Details
+                    </div>
+                  </AccordionTrigger>
                   <AccordionContent>
                     <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                       <div className="flex flex-col">
@@ -124,7 +129,12 @@ export default function TransactionDetailsComponents({
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-2">
-                  <AccordionTrigger>User Details</AccordionTrigger>
+                  <AccordionTrigger>
+                    <div className="flex flex-row gap-2">
+                      <UserIcon />
+                      User Details
+                    </div>
+                  </AccordionTrigger>
                   <AccordionContent>
                     <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                       <div className="flex flex-col">
@@ -178,7 +188,12 @@ export default function TransactionDetailsComponents({
                 )}
                 {transaction.status === "SUCCESS" && (
                   <AccordionItem value="item-4">
-                    <AccordionTrigger>Charge Details</AccordionTrigger>
+                    <AccordionTrigger>
+                      <div className="flex flex-row gap-24">
+                        <BanknoteIcon />
+                        Charge Details
+                      </div>
+                    </AccordionTrigger>
                     <AccordionContent>
                       <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                         <div className="flex flex-col">

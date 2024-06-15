@@ -203,3 +203,24 @@ export interface FincraChargeEvent {
   event: string;
   data: Data;
 }
+
+export interface ComplySession {
+  redirectUrl: string;
+}
+
+export interface ComplyCheckCompleted {
+  id: string;
+  type: string;
+  resourceType: string;
+  payload: ComplyPayload;
+  createdAt: string;
+}
+
+interface ComplyPayload {
+  id: string;
+  clientId: string;
+  enableMonitoring: boolean;
+  outcome: string;
+  createdAt: string;
+  updatedAt: string;
+}

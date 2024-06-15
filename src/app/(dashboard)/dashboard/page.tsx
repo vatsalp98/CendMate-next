@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 "use client";
+
 import MaxWidthWrapper from "~/app/_components/MaxWitdhWrapper";
 import { Button } from "~/components/ui/button";
 import TransactionsList from "~/app/_components/TransactionsList";
