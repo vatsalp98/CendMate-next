@@ -9,9 +9,9 @@ import {
 } from "~/components/ui/card";
 import { api } from "~/trpc/react";
 import Image from "next/image";
-import { formatMoney } from "~/lib/utils";
 import CreateWalletForm from "~/app/_components/CreateWalletForm";
 import Link from "next/link";
+import { formatMoney } from "~/lib/utils";
 
 export default function WalletList() {
   const wallets = api.wallet.getWallets.useQuery();
@@ -29,7 +29,7 @@ export default function WalletList() {
       <div className="mt-10">
         <div className="mb-6 flex w-full flex-row items-center justify-between">
           <div>
-            <h3 className="text-2xl font-semibold">Your Wallets</h3>
+            <h3 className="text-2xl font-bold">Your Wallets</h3>
             <span className="text-muted-foreground">
               List of all your wallets.
             </span>
@@ -46,7 +46,7 @@ export default function WalletList() {
             </div>
           </div>
         )}
-        <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        <div className="mt-2 grid grid-cols-2 gap-4 sm:grid-cols-3  lg:grid-cols-5">
           {wallets.data?.map((item) => (
             <Link href={`/wallets/${item.id}`} key={item.id}>
               <Card

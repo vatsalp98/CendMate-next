@@ -7,6 +7,8 @@ import {
   User2Icon,
   ArrowUpDownIcon,
   BadgeDollarSign,
+  UserCog2,
+  RefreshCcw,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -64,6 +66,18 @@ export default function DashSideBar() {
             Wallets
           </Link>
           <Link
+            href="/convert"
+            className={cn(
+              "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2",
+              pathName.startsWith("/convert")
+                ? "bg-gray-100 text-primary transition-all hover:bg-gray-400 hover:text-white"
+                : " text-muted-foreground hover:text-foreground",
+            )}
+          >
+            <RefreshCcw className="h-5 w-5" />
+            Convert
+          </Link>
+          <Link
             href="/recipients"
             className={cn(
               "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2",
@@ -75,6 +89,7 @@ export default function DashSideBar() {
             <User2Icon className="h-5 w-5" />
             Recipients
           </Link>
+
           <Link
             href="/transactions"
             className={cn(
@@ -99,6 +114,18 @@ export default function DashSideBar() {
           >
             <BadgeDollarSign className="h-5 w-5" />
             Exchange Rate
+          </Link>
+          <Link
+            href="/profile"
+            className={cn(
+              "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2",
+              pathName.startsWith("/profile")
+                ? "bg-gray-100 text-primary transition-all hover:bg-gray-400 hover:text-white"
+                : " text-muted-foreground hover:text-foreground",
+            )}
+          >
+            <UserCog2 className="h-5 w-5" />
+            Profile
           </Link>
         </nav>
       </SheetContent>

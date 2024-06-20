@@ -5,6 +5,7 @@ import {
   LandmarkIcon,
   Loader2,
   PlusIcon,
+  UserCheck2,
 } from "lucide-react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -33,19 +34,26 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { Separator } from "~/components/ui/separator";
-import { isFincraCurrency, validateDecimal } from "~/lib/utils";
+import {
+  getCurrencySymbol,
+  isFincraCurrency,
+  validateDecimal,
+} from "~/lib/utils";
 import { api } from "~/trpc/react";
+import CopyButton from "./CopyButton";
 
 interface DepositDialogProps {
   currency: string;
   mapleRadAccountNumber: string;
   wallet_id: string;
+  mapleRadAccountName: string;
   refetchTransactions: () => void;
 }
 
 export default function DepositDialog({
   currency,
   mapleRadAccountNumber,
+  mapleRadAccountName,
   wallet_id,
   refetchTransactions,
 }: DepositDialogProps) {
@@ -111,12 +119,33 @@ export default function DepositDialog({
             <div className="flex flex-col gap-2 py-4">
               <div className="flex w-full flex-row items-center justify-between gap-2">
                 <h2 className="flex flex-row gap-2 font-semibold text-muted-foreground">
+                  <UserCheck2 />
+                  Account Name
+                </h2>
+                <div className="flex flex-row items-center gap-1">
+                  <CopyButton
+                    text={mapleRadAccountName}
+                    textTitle="Account Name"
+                  />
+                  <Badge className="rounded-sm text-lg">
+                    {mapleRadAccountName}
+                  </Badge>
+                </div>
+              </div>
+              <div className="flex w-full flex-row items-center justify-between gap-2">
+                <h2 className="flex flex-row gap-2 font-semibold text-muted-foreground">
                   <Hash />
                   Account Number
                 </h2>
-                <Badge className="rounded-sm text-lg">
-                  {mapleRadAccountNumber}
-                </Badge>
+                <div className="flex flex-row items-center gap-1">
+                  <CopyButton
+                    text={mapleRadAccountNumber}
+                    textTitle="Account Number"
+                  />
+                  <Badge className="rounded-sm text-lg">
+                    {mapleRadAccountNumber}
+                  </Badge>
+                </div>
               </div>
 
               <div className="flex flex-row items-center justify-between gap-2">
@@ -124,9 +153,15 @@ export default function DepositDialog({
                   <LandmarkIcon />
                   Bank Name
                 </h2>
-                <Badge className="rounded-sm text-lg">
-                  9 Payment Service Bank
-                </Badge>
+                <div className="flex flex-row items-center gap-1">
+                  <CopyButton
+                    text={"9 Payment Service Bank"}
+                    textTitle="Bank Name"
+                  />
+                  <Badge className="rounded-sm text-lg">
+                    9 Payment Service Bank
+                  </Badge>
+                </div>
               </div>
             </div>
             {/* <DialogFooter className="text-sm font-semibold text-muted-foreground">
@@ -201,19 +236,27 @@ export default function DepositDialog({
                           <FormItem>
                             <FormLabel>Amount</FormLabel>
                             <FormControl>
-                              <Input
-                                value={field.value}
-                                onChange={(e) => {
-                                  if (validateDecimal(e.target.value)) {
-                                    field.onChange(e);
-                                  } else {
-                                    form.setError("amount", {
-                                      message: "Invalid Amount",
-                                    });
-                                  }
-                                }}
-                                placeholder="00.00"
-                              />
+                              <div className="relative">
+                                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                  <span className="text-muted-foreground sm:text-sm">
+                                    {getCurrencySymbol(currency)}
+                                  </span>
+                                </div>
+                                <Input
+                                  value={field.value}
+                                  onChange={(e) => {
+                                    if (validateDecimal(e.target.value)) {
+                                      field.onChange(e);
+                                    } else {
+                                      form.setError("amount", {
+                                        message: "Invalid Amount",
+                                      });
+                                    }
+                                  }}
+                                  className="pl-12"
+                                  placeholder="00.00"
+                                />
+                              </div>
                             </FormControl>
                             <FormDescription>
                               Enter the amount you want to deposit.

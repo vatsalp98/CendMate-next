@@ -2,7 +2,7 @@
 
 import { BanknoteIcon, Loader2Icon, ReceiptText, UserIcon } from "lucide-react";
 import { api } from "~/trpc/react";
-import { cn, formatCurrency } from "~/lib/utils";
+import { cn, formatCurrency, formatMoney } from "~/lib/utils";
 import { Badge } from "~/components/ui/badge";
 import {
   Accordion,
@@ -11,6 +11,7 @@ import {
   AccordionTrigger,
 } from "~/components/ui/accordion";
 import Link from "next/link";
+import CopyButton from "./CopyButton";
 
 interface TransactionDetailsProps {
   id: string;
@@ -39,10 +40,14 @@ export default function TransactionDetailsComponents({
       <>
         <div>
           <div className="mt-6">
-            <div>
+            <div className="flex flex-row gap-2">
               <h2 className="text-2xl font-bold">
                 Transaction #{transaction.referenceId}
               </h2>
+              <CopyButton
+                text={transaction.referenceId}
+                textTitle="Transaction ID"
+              />
             </div>
             <div className="my-5">
               <Accordion type="multiple" defaultValue={["item-1"]}>
@@ -62,7 +67,7 @@ export default function TransactionDetailsComponents({
                         <strong>
                           {formatCurrency(
                             transaction.currency,
-                            transaction.amount,
+                            formatMoney(transaction.amount),
                           )}
                         </strong>
                       </div>

@@ -1,5 +1,5 @@
 import type { Transaction, User } from "@prisma/client";
-import { ArrowDownCircle } from "lucide-react";
+import { ArrowDownCircle, ArrowUpCircle, RefreshCcw } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "~/components/ui/badge";
 import {
@@ -28,7 +28,15 @@ export default function TransactionCard({
         >
           <div className="flex flex-row items-center pl-4">
             <div>
-              <ArrowDownCircle className="h-8 w-8 text-green-600" />
+              {item.type === "pay-in" && (
+                <ArrowDownCircle className="h-8 w-8 text-green-600" />
+              )}
+              {item.type === "pay-out" && (
+                <ArrowUpCircle className="h-8 w-8 text-red-600" />
+              )}
+              {item.type === "transfer" && (
+                <RefreshCcw className="h-8 w-8 text-yellow-600" />
+              )}
             </div>
             <div>
               <CardHeader>
@@ -39,7 +47,7 @@ export default function TransactionCard({
                   Created On {new Date(item.createdAt).toLocaleString()}
                 </CardDescription>
                 <div>
-                  Transaction Id: <strong>{item.fincraPayCode}</strong>
+                  Transaction Id: <strong>{item.referenceId}</strong>
                 </div>
                 <div>
                   <Badge

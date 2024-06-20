@@ -179,6 +179,7 @@ interface Data {
   amount: number;
   amountExpected: number;
   amountReceived: number;
+  amountCharged?: number;
   varianceType: string | null;
   currency: string;
   fee: number;
@@ -187,6 +188,7 @@ interface Data {
   actionRequired: string | null;
   status: string;
   reference: string;
+  customerReference?: string;
   description: string;
   type: string;
   customer: Customer;
@@ -223,4 +225,42 @@ interface ComplyPayload {
   outcome: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface FincraPayoutResponse {
+  success: boolean;
+  message: string;
+  data: {
+    id: number;
+    reference: string;
+    customerReference: string;
+    status: string;
+    documentsRequired: any[]; // Adjust this type if documentsRequired has a specific structure
+  };
+}
+
+export interface FincraPayoutTransaction {
+  id: number;
+  amountCharged: number;
+  amountReceived: number;
+  recipient: {
+    name: string;
+    accountNumber: string;
+    type: string;
+    email: string;
+  };
+  fee: number;
+  rate: number;
+  paymentScheme: string | null; // Assuming it can be a string or null
+  paymentDestination: string;
+  sourceCurrency: string;
+  destinationCurrency: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  reference: string;
+  customerReference: string;
+  reason: string;
+  traceId: string | null; // Assuming it can be a string or null
+  valuedAt: string;
 }

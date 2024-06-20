@@ -5,7 +5,7 @@ export default async function ExchangeRatePage() {
   return (
     <>
       <MaxWidthWrapper>
-        <div className="mt-10">
+        <div className="mt-4">
           <div className="mb-6 flex w-full flex-row items-center justify-between">
             <div>
               <h3 className="text-2xl font-semibold">Exchange Rates</h3>
@@ -13,11 +13,6 @@ export default async function ExchangeRatePage() {
                 Review all of the exchange Rates.
               </span>
             </div>
-            {/* <div>
-              <Button className="gap-1" variant={"outline"}>
-                <Edit /> Edit Rate
-              </Button>
-            </div> */}
           </div>
           <ExchangeRateTable />
         </div>

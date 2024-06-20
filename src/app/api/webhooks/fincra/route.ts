@@ -92,6 +92,60 @@ export async function POST(req: Request) {
     return new Response("Fincra webhook received and processed", {
       status: 200,
     });
+  } else if (event === "payout.successful") {
+    if (!data.customerReference || !data.amountCharged) {
+      return new Response("Transaction Reference not found.", {
+        status: 404,
+      });
+    }
+    const transaction = await db.transaction.findUnique({
+      where: {
+        referenceId: data.customerReference,
+      },
+    });
+    if (!transaction) {
+      return new Response("Transaction not found.", {
+        status: 404,
+      });
+    }
+
+    if (
+      data.status === "successful" &&
+      data.amountReceived === transaction.amount
+    ) {
+      await db.transaction.update({
+        where: {
+          id: transaction.id,
+        },
+        data: {
+          status: "SUCCESS",
+          comment: "Disbursement was succesfull",
+          amountToSettle: data.amountCharged,
+          wallet: {
+            update: {
+              amount: {
+                decrement: data.amountCharged,
+              },
+            },
+          },
+        },
+      });
+      return new Response("Fincra Response Ingested", { status: 200 });
+    }
+  } else if (event === "payout.failed") {
+    await db.transaction.update({
+      where: {
+        referenceId: data.customerReference,
+      },
+      data: {
+        status: "FAILED",
+        comment: "pay-out failure, failed charge webhook received.",
+      },
+    });
+
+    return new Response("Fincra webhook received and processed", {
+      status: 200,
+    });
   }
   // // Get the body
   // const payload = (await req.json()) as FincraChargeEvent;

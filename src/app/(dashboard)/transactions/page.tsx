@@ -8,7 +8,7 @@ export default function TransactionsPage() {
         <MaxWidthWrapper>
           <div className="">
             <div className="mt-6 flex w-full flex-col">
-              <h2 className="text-2xl font-bold">Transactions</h2>
+              <h2 className="text-2xl font-bold">Your Transactions</h2>
               <span className="text-muted-foreground">
                 List of all your transactions
               </span>

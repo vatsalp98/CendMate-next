@@ -1,13 +1,13 @@
 "use client";
 
 import MaxWidthWrapper from "~/app/_components/MaxWitdhWrapper";
-import { Button } from "~/components/ui/button";
+import { buttonVariants } from "~/components/ui/button";
 import TransactionsList from "~/app/_components/TransactionsList";
 import WalletList from "~/app/_components/WalletsList";
 import DailyLimitTable from "~/app/_components/DailyLimitTable";
-import { ArrowUpRight } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import confetti from "canvas-confetti";
+import Link from "next/link";
 
 export default function DashboardPage() {
   const params = useSearchParams();
@@ -39,14 +39,24 @@ export default function DashboardPage() {
       <section className="mb-10">
         <MaxWidthWrapper>
           <div className="border-t border-gray-200">
-            <div className="mt-6 flex w-full flex-row justify-between">
-              <h2 className="text-2xl font-bold">Transactions</h2>
-              <Button variant={"outline"} className="gap-2">
-                View more
-                <ArrowUpRight />
-              </Button>
+            <div className="mt-6 flex w-full flex-row items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold">Your Transactions</h2>
+                <span className="text-muted-foreground">
+                  List of all your transactions.
+                </span>
+              </div>
+              <Link
+                href="/transactions"
+                className={buttonVariants({
+                  variant: "link",
+                  className: "gap-2",
+                })}
+              >
+                View more &rarr;
+              </Link>
             </div>
-            <div className="mt-4">
+            <div className="mt-6">
               <TransactionsList limit={3} />
             </div>
           </div>

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
+import { generateUniqueId } from "~/lib/utils";
 
 export const transactionRouters = createTRPCRouter({
   getTransactions: privateProcedure
@@ -64,6 +65,93 @@ export const transactionRouters = createTRPCRouter({
       }
 
       return transaction;
+    }),
+
+  createTransferTransaction: privateProcedure
+    .input(
+      z.object({
+        from_currency: z.string(),
+        to_currency: z.string(),
+        from_amount: z.number(),
+        to_amount: z.number(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findUnique({
+        where: {
+          uid: ctx.userId,
+        },
+        include: {
+          wallets: true,
+        },
+      });
+
+      if (!user) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User not found in db",
+        });
+      }
+
+      const fromWallet = user.wallets.find(
+        (item) => item.currency === input.from_currency,
+      );
+      const toWallet = user.wallets.find(
+        (item) => item.currency === input.to_currency,
+      );
+
+      if (!fromWallet || !toWallet) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "From or to Wallet not found in DB",
+        });
+      }
+
+      if (fromWallet.amount < input.from_amount) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Not enough funds in your wallet.",
+        });
+      }
+
+      const uid = generateUniqueId();
+
+      await ctx.db.transaction.create({
+        data: {
+          amount: input.to_amount,
+          currency: input.to_currency,
+          type: "transfer",
+          status: "SUCCESS",
+          referenceId: uid,
+          comment: `Transfer from ${input.from_currency} to ${input.to_currency}`,
+          walletId: toWallet.id,
+          senderId: user.id,
+        },
+      });
+
+      await ctx.db.wallet.update({
+        where: {
+          id: fromWallet.id,
+        },
+        data: {
+          amount: {
+            decrement: input.from_amount,
+          },
+        },
+      });
+
+      await ctx.db.wallet.update({
+        where: {
+          id: toWallet.id,
+        },
+        data: {
+          amount: {
+            increment: input.to_amount,
+          },
+        },
+      });
+
+      return user;
     }),
 
   getTransactionsByWallet: privateProcedure

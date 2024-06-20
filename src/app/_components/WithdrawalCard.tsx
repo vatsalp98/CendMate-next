@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import { Progress } from "~/components/ui/progress";
-import { formatCurrency, getTotalTransactions } from "~/lib/utils";
+import { formatCurrency, formatMoney, getTotalTransactions } from "~/lib/utils";
 
 interface LimitCardProps {
   title: string;
@@ -52,7 +52,7 @@ export default function LimitCard({
                 Daily
               </span>
               <span className="text-sm font-semibold text-muted-foreground">
-                {formatCurrency(currency, daily_limit)}
+                {formatCurrency(currency, formatMoney(daily_limit))}
               </span>
             </div>
             <Progress value={(dailyTotal / daily_limit) * 100} />
@@ -63,7 +63,7 @@ export default function LimitCard({
                 Weekly
               </span>
               <span className="text-sm font-semibold text-muted-foreground">
-                {formatCurrency(currency, weekly_limit)}
+                {formatCurrency(currency, formatMoney(weekly_limit))}
               </span>
             </div>
             <Progress value={(weeklyTotal / weekly_limit) * 100} />
@@ -74,7 +74,7 @@ export default function LimitCard({
                 Monthly
               </span>
               <span className="text-sm font-semibold text-muted-foreground">
-                {formatCurrency(currency, monthly_limit)}
+                {formatCurrency(currency, formatMoney(monthly_limit))}
               </span>
             </div>
             <Progress value={(monthlyTotal / monthly_limit) * 100} />

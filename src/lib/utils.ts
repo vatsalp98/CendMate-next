@@ -2,13 +2,17 @@ import type { Transaction, Wallet } from "@prisma/client";
 import { type ClassValue, clsx } from "clsx";
 import type { Metadata } from "next";
 import { twMerge } from "tailwind-merge";
+import { v4 as uuidv4 } from "uuid";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatMoney(amount: number): string {
-  return amount.toFixed(2);
+export function formatMoney(value: number) {
+  return value.toLocaleString(undefined, {
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 2,
+  });
 }
 
 function filterTransactions(
@@ -64,7 +68,7 @@ export function getTotalTransactions(
   return totalAmount;
 }
 
-export function formatCurrency(currency: string, amount: number): string {
+export function formatCurrency(currency: string, amount: string): string {
   // Create a map for currency symbols
   const currencySymbols: Record<string, string> = {
     USD: "$",
@@ -81,10 +85,7 @@ export function formatCurrency(currency: string, amount: number): string {
   // Default to empty string if the currency is not found
   const symbol = currencySymbols[currency] ?? "";
 
-  // Format the amount to two decimal places
-  const formattedAmount = amount.toFixed(2);
-
-  return `${symbol} ${formattedAmount}`;
+  return `${symbol} ${amount}`;
 }
 
 export function getCurrencySymbol(currency: string): string {
@@ -153,6 +154,37 @@ export function isFincraCurrency(currency: string) {
 
 export function isNiumCurrency(currency: string) {
   return ["USD", "CAD", "GBP"].includes(currency);
+}
+
+export function getCallingCodeByCurrency(
+  currency: string,
+  defaultCallingCode = "+1",
+): string {
+  // Added defaultCallingCode
+  const currencyToCallingCode: Record<string, string> = {
+    USD: "+1", // United States
+    CAD: "+1", // Canada
+    EUR: "+44", // Euro (using UK as example)
+    GHS: "+233",
+    KES: "+254", // Kenya
+  };
+
+  return currencyToCallingCode[currency] ?? defaultCallingCode; // Use the nullish coalescing operator (??)
+}
+
+const currencyMap: Record<string, string> = {
+  USD: "United States Dollar",
+  CAD: "Canadian Dollar",
+  EUR: "Euro",
+  GBP: "British Pound Sterling",
+  NGN: "Nigerian Naira",
+  KES: "Kenyan Shilling",
+  GHS: "Ghanaian Cedi",
+  TZS: "Tanzanian Shilling",
+};
+
+export function getCurrencyFullName(currencyCode: string): string {
+  return currencyMap[currencyCode] ?? "Unknown Currency Code";
 }
 
 export function conversionCurrencies(currency: string, wallets: Wallet[]) {
@@ -404,4 +436,9 @@ const countryCodes: Record<string, string> = {
 
 export function getCountryCode(countryName: string): string {
   return countryCodes[countryName] ?? " ";
+}
+
+export function generateUniqueId() {
+  // Generate a unique MID (Merchant ID) using UUID version 4
+  return uuidv4().replace(/-/g, "").substring(0, 9); // Remove hyphens and take the first 9 characters
 }

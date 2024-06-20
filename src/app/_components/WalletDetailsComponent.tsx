@@ -1,21 +1,27 @@
 "use client";
 
 import {
-  ArrowDown,
   ArrowDownCircle,
   ArrowUpCircle,
   Loader2Icon,
+  RefreshCcw,
 } from "lucide-react";
 import { api } from "~/trpc/react";
 import Image from "next/image";
-import { formatCurrency } from "~/lib/utils";
+import {
+  formatCurrency,
+  formatMoney,
+  getCurrencyFullName,
+  isFincraCurrency,
+} from "~/lib/utils";
 import LimitCard from "./WithdrawalCard";
-import { Button, buttonVariants } from "~/components/ui/button";
+import { buttonVariants } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import DepositDialog from "./DepositDialog";
-import ConvertDialog from "./ConvertDialog";
 import Link from "next/link";
 import TransactionCard from "./TransactionCard";
+import FincraWithdrawalDialog from "./WithdrawalDialog";
+import { Badge } from "~/components/ui/badge";
 
 interface WalletDetailsProps {
   id: string;
@@ -42,7 +48,7 @@ export default function WalletDetails({ id }: WalletDetailsProps) {
     return (
       <>
         <div>
-          <div className="mt-6">
+          <div className="mt-6 px-2">
             <div className="flex flex-row items-center justify-between gap-4">
               <div className="flex flex-row items-center gap-2">
                 <Image
@@ -51,15 +57,17 @@ export default function WalletDetails({ id }: WalletDetailsProps) {
                   width={100}
                   height={100}
                 />
-                <h2 className="text-2xl font-semibold">
-                  {walletData.wallet.currency} Wallet
+                <h2 className="text-xl font-bold">
+                  {getCurrencyFullName(walletData.wallet.currency)} Wallet
                 </h2>
               </div>
-              <div className="text-2xl font-bold">
-                {formatCurrency(
-                  walletData.wallet.currency,
-                  walletData.wallet.amount,
-                )}
+              <div>
+                <Badge className="text-md flex flex-row rounded-md font-bold md:text-xl">
+                  {formatCurrency(
+                    walletData.wallet.currency,
+                    formatMoney(walletData.wallet.amount),
+                  )}
+                </Badge>
               </div>
             </div>
           </div>
@@ -69,22 +77,34 @@ export default function WalletDetails({ id }: WalletDetailsProps) {
               refetchTransactions={refetchTransactions}
               currency={walletData.wallet.currency}
               mapleRadAccountNumber={walletData.wallet.mapleRadAccountNumber!}
+              mapleRadAccountName={walletData.wallet.mapleRadAccountName!}
             />
-            <ConvertDialog currency={walletData.wallet.currency} />
+            <Link
+              href="/convert"
+              className={buttonVariants({
+                variant: "outline",
+                className: "flex-1 gap-2",
+              })}
+            >
+              <RefreshCcw />
+              Convert
+            </Link>
+            {/* {exchangesRates && (
+              <ConvertDialog
+                currency={walletData.wallet.currency}
+                exchangeRates={exchangesRates.rates}
+                fromRate={exchangesRates.fromRate}
+              />
+            )} */}
 
-            {/* <Button className="flex-1 gap-1" variant={"outline"}>
-              <ArrowUp />
-              Send
-            </Button> */}
-            <Button className="flex-1 gap-1" variant={"outline"}>
-              <ArrowDown />
-              Withdraw
-            </Button>
+            {isFincraCurrency(walletData.wallet.currency) && (
+              <FincraWithdrawalDialog currency={walletData.wallet.currency} />
+            )}
           </div>
 
           <div className="mt-3 flex w-full flex-row gap-4">
             <LimitCard
-              icon={<ArrowDownCircle className="text-primary" />}
+              icon={<ArrowDownCircle className="text-green-500" />}
               title="Deposit"
               currency={walletData.wallet.currency}
               transactions={transactionsData}
@@ -96,7 +116,7 @@ export default function WalletDetails({ id }: WalletDetailsProps) {
             <LimitCard
               title="Withdrawal"
               currency={walletData.wallet.currency}
-              icon={<ArrowUpCircle className="text-primary" />}
+              icon={<ArrowUpCircle className="text-red-500" />}
               transactions={transactionsData}
               type="pay-out"
               daily_limit={walletData.limit?.withdraw_daily ?? 0}

@@ -39,13 +39,18 @@ const MobileNav = () => {
           className={buttonVariants({
             variant: "outline",
             size: "icon",
+            className: cn(
+              scrolled
+                ? "text-black dark:text-primary"
+                : "bg-primary text-white hover:bg-gray-400 hover:text-black dark:bg-slate-900 dark:text-white",
+            ),
           })}
         >
           <Menu
             className={cn(
               scrolled
                 ? "text-black dark:text-primary"
-                : "text-white dark:text-white",
+                : " text-white dark:text-white",
             )}
           />
         </SheetTrigger>

@@ -4,6 +4,7 @@ import {
   ArrowUpDownIcon,
   BadgeDollarSignIcon,
   Home,
+  RefreshCcw,
   User2Icon,
   UserCog2,
   Wallet2,
@@ -54,6 +55,18 @@ export default function SideBarNav() {
         >
           <User2Icon className="h-4 w-4" />
           Recipients
+        </Link>
+        <Link
+          href="/convert"
+          className={cn(
+            "my-2 flex items-center gap-3 rounded-lg px-3 py-3 font-semibold",
+            pathName.startsWith("/convert")
+              ? "bg-blue-100 text-primary transition-all hover:text-primary"
+              : "text-muted-foreground transition-all hover:bg-gray-100 hover:text-primary",
+          )}
+        >
+          <RefreshCcw className="h-4 w-4" />
+          Convert
         </Link>
         <Link
           href="/transactions"

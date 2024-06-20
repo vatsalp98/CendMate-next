@@ -1,7 +1,4 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRight, RefreshCw } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { Loader2, RefreshCw } from "lucide-react";
 import { Button, buttonVariants } from "~/components/ui/button";
 import {
   Dialog,
@@ -13,57 +10,32 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "~/components/ui/form";
-import { Input } from "~/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
-import { conversionCurrencies } from "~/lib/utils";
 import { api } from "~/trpc/react";
+import ConvertForm from "./ConvertForm";
+import type { ExchangeRate } from "@prisma/client";
+import { useState } from "react";
+import { formatCurrency } from "~/lib/utils";
 
 interface ConvertDialogProps {
   currency: string;
+  exchangeRates: ExchangeRate[];
+  fromRate: ExchangeRate;
 }
 
-export default function ConvertDialog({ currency }: ConvertDialogProps) {
-  const convertFormSchema = z.object({
-    from_currency: z.string(),
-    to_currency: z.string(),
-    send_amount: z.string().regex(/^\d+(\.\d{1,2})?$/),
-    receive_amount: z.string().regex(/^\d+(\.\d{1,2})?$/),
-  });
-
+export default function ConvertDialog({
+  currency,
+  exchangeRates,
+  fromRate,
+}: ConvertDialogProps) {
+  const [finalStep, setFinalStep] = useState("initial");
+  const [fromAmount, setFromAmount] = useState("");
+  const [toAmount, setToAmount] = useState("");
+  const [toCurrency, setToCurrency] = useState("");
+  const [toRate, setToRate] = useState(0.0);
   const { data: wallets } = api.wallet.getWallets.useQuery();
 
-  type TConvertFormValues = z.infer<typeof convertFormSchema>;
-
-  const form = useForm<TConvertFormValues>({
-    resolver: zodResolver(convertFormSchema),
-    defaultValues: {
-      from_currency: currency,
-    },
-    mode: "onChange",
-  });
-
-  const onSubmit = (values: TConvertFormValues) => {
-    console.log("Values", values);
-  };
-
-  const onAmountChange = (value: string) => {
-    form.setValue("send_amount", value);
-    form.setValue("receive_amount", (parseFloat(value) * 1.5).toString());
-  };
+  const exchangeMutation =
+    api.transactions.createTransferTransaction.useMutation();
 
   if (wallets)
     return (
@@ -86,107 +58,93 @@ export default function ConvertDialog({ currency }: ConvertDialogProps) {
               </DialogDescription>
             </DialogHeader>
             <div className="py-4">
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)}>
-                  <div className="flex flex-row items-center gap-4">
-                    <FormField
-                      name="from_currency"
-                      control={form.control}
-                      render={({ field }) => (
-                        <FormItem className="flex-1">
-                          <FormLabel>From Currency</FormLabel>
-                          <FormControl>
-                            <Input {...field} disabled value={currency} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    <ArrowRight className="mt-6 text-primary" />
-                    <FormField
-                      name="to_currency"
-                      control={form.control}
-                      render={({ field }) => (
-                        <FormItem className="flex-1">
-                          <FormLabel>To Currency</FormLabel>
-                          <Select
-                            value={field.value}
-                            onValueChange={field.onChange}
-                          >
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select a currency" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {conversionCurrencies(currency, wallets).map(
-                                (item) => (
-                                  <SelectItem
-                                    key={item.id}
-                                    value={item.currency}
-                                  >
-                                    {item.currency}
-                                  </SelectItem>
-                                ),
-                              )}
-                              {/* {wallets
-                              ?.filter((wallet) => wallet.currency != currency)
-                              .map((item) => (
-                                <SelectItem key={item.id} value={item.currency}>
-                                  {item.currency}
-                                </SelectItem>
-                              ))} */}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+              {finalStep === "initial" && (
+                <ConvertForm
+                  exchangeRates={exchangeRates}
+                  fromRate={fromRate}
+                  currency={currency}
+                  setFromAmount={setFromAmount}
+                  setToCurrency={setToCurrency}
+                  setToAmount={setToAmount}
+                  wallets={wallets}
+                  toCurrency={toCurrency}
+                  setStep={setFinalStep}
+                  setToRate={setToRate}
+                />
+              )}
+              {finalStep === "final" && (
+                <>
+                  <div>
+                    <span className="font-semibold text-muted-foreground">
+                      Transfer Rate:{" "}
+                    </span>
+                    <strong>
+                      {formatCurrency(toCurrency, "1")} ={" "}
+                      {formatCurrency(fromRate.currency, toRate.toString())}
+                    </strong>
                   </div>
-                  <div className="mt-2 flex flex-row items-center gap-4">
-                    <FormField
-                      name="send_amount"
-                      control={form.control}
-                      render={({ field }) => (
-                        <FormItem className="flex-1">
-                          <FormLabel>From Amount</FormLabel>
-                          <FormControl>
-                            <Input
-                              onChange={(e) => onAmountChange(e.target.value)}
-                              value={field.value}
-                              placeholder="0.00"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <ArrowRight className="mt-6 text-primary" />
-                    <FormField
-                      name="receive_amount"
-                      control={form.control}
-                      render={({ field }) => (
-                        <FormItem className="flex-1">
-                          <FormLabel>Receiving Amount</FormLabel>
-                          <FormControl>
-                            <Input {...field} placeholder="0.00" disabled />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                  <div>
+                    <span className="font-semibold text-muted-foreground">
+                      Conversion Fee:{" "}
+                    </span>
+                    <strong>2%</strong>
                   </div>
-                </form>
-              </Form>
+                  <div>
+                    Are you sure you want to transfer{" "}
+                    <strong>
+                      {fromAmount} {currency}{" "}
+                    </strong>{" "}
+                    to{" "}
+                    <strong>
+                      {toAmount} {toCurrency}
+                    </strong>{" "}
+                    ?
+                  </div>
+                </>
+              )}
             </div>
             <DialogFooter>
-              <DialogClose
-                className={buttonVariants({
-                  variant: "secondary",
-                })}
-              >
-                Cancel
-              </DialogClose>
-              <Button>Convert</Button>
+              {finalStep === "initial" && (
+                <DialogClose
+                  className={buttonVariants({
+                    variant: "secondary",
+                  })}
+                >
+                  Cancel
+                </DialogClose>
+              )}
+              {finalStep === "final" && (
+                <Button
+                  variant={"secondary"}
+                  onClick={() => setFinalStep("initial")}
+                >
+                  Back
+                </Button>
+              )}
+              {finalStep === "initial" && (
+                <Button type="submit" form="exchange-form">
+                  Next
+                </Button>
+              )}
+              {finalStep === "final" && (
+                <Button
+                  onClick={() => {
+                    exchangeMutation.mutate({
+                      from_amount: parseFloat(fromAmount),
+                      to_amount: parseFloat(toAmount),
+                      to_currency: toCurrency,
+                      from_currency: currency,
+                    });
+                  }}
+                  disabled={exchangeMutation.isPending}
+                >
+                  {exchangeMutation.isPending ? (
+                    <Loader2 className="animate-spin" />
+                  ) : (
+                    "Convert"
+                  )}
+                </Button>
+              )}
             </DialogFooter>
           </DialogContent>
         </Dialog>
