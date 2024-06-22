@@ -2,6 +2,12 @@ import type { Transaction, Wallet } from "@prisma/client";
 import { type ClassValue, clsx } from "clsx";
 import type { Metadata } from "next";
 import { twMerge } from "tailwind-merge";
+import { z } from "zod";
+import {
+  Beneficiary,
+  beneficiaryPropertySchema,
+  beneficiaryResponseSchemaObject,
+} from "~/config/models";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -103,6 +109,7 @@ export function getCurrencySymbol(currency: string): string {
 }
 
 export const numberRegex = /^\d+(\.\d{1,2})?$/;
+export const currencyRegex = /^([A-Z]{3})$/;
 
 export function constructMetadata({
   title = "Cendmate Inc.",
@@ -155,6 +162,8 @@ export function isNiumCurrency(currency: string) {
   return ["USD", "CAD", "GBP"].includes(currency);
 }
 
+export const westernCurrencies = ["CAD", "EUR", "USD", "GBP"];
+
 export function conversionCurrencies(currency: string, wallets: Wallet[]) {
   const allCurrencies = [
     "USD",
@@ -166,7 +175,6 @@ export function conversionCurrencies(currency: string, wallets: Wallet[]) {
     "GHS",
     "TZS",
   ];
-  const westernCurrencies = ["CAD", "EUR", "USD", "GBP"];
 
   const supportedConversions: Record<string, string[]> = {
     USD: allCurrencies.filter((item) => item != "USD"),
@@ -405,3 +413,52 @@ const countryCodes: Record<string, string> = {
 export function getCountryCode(countryName: string): string {
   return countryCodes[countryName] ?? " ";
 }
+
+export function getRequiredFieldProperties(
+  schemaData: beneficiaryResponseSchemaObject,
+) {
+  let zodSchema = z.object({});
+  schemaData.required.forEach((requiredField) => {
+    const fieldProperty =
+      schemaData.properties[requiredField as keyof Beneficiary];
+    // console.log("FIElD PROPERTY: ", fieldProperty);
+    if (fieldProperty.type === "string") {
+      if (fieldProperty.pattern) {
+        if (fieldProperty.maxLength) {
+          const maxLength =
+            typeof fieldProperty.maxLength === "string"
+              ? parseInt(fieldProperty.maxLength)
+              : fieldProperty.maxLength;
+          zodSchema.extend({
+            requiredField: z
+              .string()
+              .regex(RegExp(fieldProperty.pattern))
+              .length(maxLength, fieldProperty.errorMessage),
+          });
+        } else {
+          zodSchema.extend({
+            requiredField: z
+              .string()
+              .regex(RegExp(fieldProperty.pattern), fieldProperty.errorMessage),
+          });
+        }
+      } else if (fieldProperty.enum) {
+        const enumValues = fieldProperty.enum as [string, ...string[]];
+        zodSchema.extend({
+          requiredField: z.enum(enumValues),
+        });
+      } else {
+        zodSchema.extend({
+          requiredField: z.string({ message: fieldProperty.errorMessage }),
+        });
+      }
+    }
+  });
+  return { fields: schemaData.required, schema: zodSchema };
+}
+
+// export function generateFormZodSchema(
+//   requiredFieldProperties: beneficiaryPropertySchema[],
+// ) {
+
+// }

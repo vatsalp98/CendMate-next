@@ -1,4 +1,7 @@
 /* eslint-disable @typescript-eslint/no-redundant-type-constituents */
+
+import { z } from "zod";
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface WebhookResponse {
   data: {
@@ -223,4 +226,119 @@ interface ComplyPayload {
   outcome: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface beneficiaryResponseSchemaObject {
+  $schema: string;
+  $id: string;
+  type: string;
+  title: string;
+  required: string[];
+  properties: Record<keyof Beneficiary, beneficiaryPropertySchema>;
+}
+
+export interface beneficiaryPropertySchema {
+  $id: string;
+  type: string;
+  title: string;
+  maxLength?: string;
+  enum?: string[];
+  pattern?: string;
+  errorMessage: string;
+}
+
+export interface Beneficiary {
+  clientLegalEntity: string;
+  destinationCountry: "CA" | string; // "CA" for Canada, string for other countries
+  beneficiaryName: string;
+  beneficiaryAddress?: string;
+  beneficiaryCity?: string;
+  beneficiaryState?: string;
+  beneficiaryPostcode?: string;
+  beneficiaryCountryCode: string;
+  beneficiaryAccountType: "Individual" | "Corporate";
+  beneficiaryAccountNumber: string;
+  beneficiaryBankCode?: string;
+  routingCodeType1: "TRANSIT NUMBER" | "SWIFT" | "INTERAC";
+  routingCodeValue1: string;
+  beneficiaryAlias?: string;
+  beneficiaryEmail?: string;
+  beneficiaryBankAccountType?: "Checking" | "Saving" | "Maestra" | "Current";
+  beneficiaryContactNumber?: string;
+  remitterBeneficiaryRelationship?: string;
+  beneficiaryBankName?: string;
+  beneficiaryIdentificationType?: string;
+  beneficiaryIdentificationValue?: string;
+  routingCodeType2?: string;
+  routingCodeValue2?: string;
+}
+
+// curl --request POST \
+//      --url https://gateway.nium.com/api/v2/client/7ae4ae1a-7bac-45c7-8212-b27d26743454/customer/8d992de5-2aaf-4e7c-8fa9-a0ae683fa590/beneficiaries \
+//      --header 'accept: */*' \
+//      --header 'content-type: application/json' \
+//      --header 'x-api-key: dNIRWnsnXr9tR625jDiYw2zWh53GJyO68xvtvYuf' \
+//      --data '
+// {
+//   "beneficiaryAccountType": "Individual",
+//   "beneficiaryCountryCode": "CA",
+//   "destinationCurrency": "USD",
+//   "destinationCountry": "US",
+//   "beneficiaryName": "RanjithP Singh",
+//   "beneficiaryAddress": "TOWER bridge of MY",
+//   "beneficiaryCity": "Wales",
+//   "beneficiaryState": "MY",
+//   "beneficiaryPostcode": "654646",
+//   "beneficiaryAccountNumber": "TESTCAODF12",
+//   "routingCodeType1": "ACH CODE",
+//   "routingCodeValue1": "111000025"
+// }
+
+interface AddBeneficiaryResponse {
+  beneficiaryHashId: string; // Alphanumeric
+  beneficiaryName: string; // Alphanumeric and special characters
+  beneficiaryContactCountryCode?: string | null; // Optional, nullable
+  beneficiaryContactNumber?: string | null; // Optional, nullable
+  beneficiaryAccountType: "Individual" | "Corporate"; // Either "Individual" or "Corporate"
+  beneficiaryEmail?: string | null; // Optional, nullable
+  autosweepPayoutAccount: boolean; // Boolean
+  defaultAutosweepPayoutAccount: boolean; // Boolean
+  remitterBeneficiaryRelationship?: string | null; // Optional, nullable
+  beneficiaryAddress: string; // Alphanumeric and special characters
+  beneficiaryCountryCode: string; // Valid country code
+  beneficiaryState: string; // Alphanumeric
+  beneficiaryCity: string; // Alphanumeric
+  beneficiaryPostcode: string; // Alphanumeric
+  beneficiaryCreatedAt: string; // Date string
+  beneficiaryUpdatedAt: string; // Date string
+  payoutHashId: string; // Alphanumeric
+  destinationCountry: string; // Valid country code
+  destinationCurrency: string; // Valid currency code
+  beneficiaryBankName: string; // Alphanumeric and special characters
+  beneficiaryBankAccountType?: string | null; // Optional, nullable
+  beneficiaryAccountNumber: string; // Alphanumeric
+  beneficiaryBankCode?: string | null; // Optional, nullable
+  routingCodeType1: string; // Alphanumeric
+  routingCodeValue1: string; // Alphanumeric
+  routingCodeType2?: string | null; // Optional, nullable
+  routingCodeValue2?: string | null; // Optional, nullable
+  payoutMethod: string; // Alphanumeric
+  beneficiaryIdentificationType?: string | null; // Optional, nullable
+  beneficiaryIdentificationValue?: string | null; // Optional, nullable
+  payoutCreatedAt: string; // Date string
+  payoutUpdatedAt: string; // Date string
+  beneficiaryCardType?: string | null; // Optional, nullable
+  beneficiaryCardToken?: string | null; // Optional, nullable
+  beneficiaryCardNumberMask?: string | null; // Optional, nullable
+  beneficiaryCardIssuerName?: string | null; // Optional, nullable
+  beneficiaryCardExpiryDate?: string | null; // Optional, nullable
+  beneficiaryCardMetaData?: string | null; // Optional, nullable
+  proxyType?: string | null; // Optional, nullable
+  proxyValue?: string | null; // Optional, nullable
+  convertDestinationCurrency: boolean; // Boolean
+  beneficiaryContactName?: string | null; // Optional, nullable
+  beneficiaryEntityType?: string | null; // Optional, nullable
+  beneficiaryDob?: string | null; // Optional, nullable
+  beneficiaryEstablishmentDate?: string | null; // Optional, nullable
+  accountVerification?: string | null; // Optional, nullable
 }
