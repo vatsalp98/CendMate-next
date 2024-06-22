@@ -88,12 +88,12 @@ export default function ConvertPage() {
     if (to_currency === "USD") {
       const amountInUSD = (parseFloat(from_amount) / fromRate!) * 0.97;
       convertForm.setValue("to_amount", amountInUSD.toFixed(2));
-      setConversionRate(fromRate!);
+      setConversionRate(fromRate! * 0.97);
     } else {
       const toRate = rates?.find(
         (item) => item.currency === to_currency,
       )?.marketRate;
-      setConversionRate((1 * fromRate!) / toRate!);
+      setConversionRate((fromRate! / toRate!) * 0.97);
       const amountInUSD = parseFloat(from_amount) / fromRate!;
       const converted = amountInUSD * toRate! * 0.97;
       convertForm.setValue("to_amount", converted.toFixed(2));
@@ -128,7 +128,7 @@ export default function ConvertPage() {
                     className="flex-1"
                     onClick={() => setCurrentStep(0)}
                   >
-                    Deposit Again
+                    Convert Again
                   </Button>
                   <Link
                     href="/wallets"
@@ -159,6 +159,7 @@ export default function ConvertPage() {
                           convertForm.getValues("from_amount"),
                         ).toLocaleString(undefined, {
                           maximumFractionDigits: 2,
+                          minimumFractionDigits: 2,
                         })}{" "}
                         {fromCurrency}
                       </strong>{" "}
@@ -168,6 +169,7 @@ export default function ConvertPage() {
                           convertForm.getValues("to_amount"),
                         ).toLocaleString(undefined, {
                           maximumFractionDigits: 2,
+                          minimumFractionDigits: 2,
                         })}{" "}
                         {toCurrency}
                       </strong>{" "}
@@ -181,9 +183,6 @@ export default function ConvertPage() {
                         })}{" "}
                         {fromCurrency}
                       </strong>
-                    </div>
-                    <div className="text-sm italic text-muted-foreground">
-                      A 2% conversion fee will the added to this rate.
                     </div>
                   </CardContent>
                   <CardFooter className="flex w-full flex-row gap-2">
@@ -376,10 +375,6 @@ export default function ConvertPage() {
                         )}
                       />
                     </div>
-                  </div>
-                  <div className="mt-3 flex flex-row justify-end text-sm italic text-muted-foreground">
-                    Please note a 2% conversion fee will be applied to the
-                    transaction.
                   </div>
                   <div className="mt-10 flex w-full flex-row">
                     <Button className="flex-1 gap-2">

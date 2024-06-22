@@ -35,6 +35,7 @@ import {
 import { Input } from "~/components/ui/input";
 import { Separator } from "~/components/ui/separator";
 import {
+  formatCurrency,
   getCurrencySymbol,
   isFincraCurrency,
   validateDecimal,
@@ -164,10 +165,10 @@ export default function DepositDialog({
                 </div>
               </div>
             </div>
-            {/* <DialogFooter className="text-sm font-semibold text-muted-foreground">
-              Please make sure the transfer is done with your personal account.
-              Sharing this information may result in a banned account.
-            </DialogFooter> */}
+            <DialogFooter className="gap-1 text-sm italic text-muted-foreground">
+              Please note you will be charged a 1% deposit fee capped at
+              <strong> {formatCurrency("NGN", "500.00")}</strong>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
       </>
@@ -258,8 +259,9 @@ export default function DepositDialog({
                                 />
                               </div>
                             </FormControl>
-                            <FormDescription>
-                              Enter the amount you want to deposit.
+                            <FormDescription className="italic">
+                              Please note there is a 1% fee on your deposit
+                              amount.
                             </FormDescription>
                             <FormMessage />
                           </FormItem>

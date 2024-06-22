@@ -4,7 +4,6 @@ import MaxWidthWrapper from "~/app/_components/MaxWitdhWrapper";
 import { buttonVariants } from "~/components/ui/button";
 import TransactionsList from "~/app/_components/TransactionsList";
 import WalletList from "~/app/_components/WalletsList";
-import DailyLimitTable from "~/app/_components/DailyLimitTable";
 import { useSearchParams } from "next/navigation";
 import confetti from "canvas-confetti";
 import Link from "next/link";
@@ -58,19 +57,6 @@ export default function DashboardPage() {
             </div>
             <div className="mt-6">
               <TransactionsList limit={3} />
-            </div>
-          </div>
-        </MaxWidthWrapper>
-      </section>
-
-      <section className="mb-10">
-        <MaxWidthWrapper>
-          <div className="border-t border-gray-200">
-            <div className="mt-6 flex w-full flex-row justify-between">
-              <h2 className="text-2xl font-bold">Daily Limits</h2>
-            </div>
-            <div className="mt-4 rounded-lg border">
-              <DailyLimitTable />
             </div>
           </div>
         </MaxWidthWrapper>

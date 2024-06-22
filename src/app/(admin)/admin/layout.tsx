@@ -1,12 +1,15 @@
 import type { ReactNode } from "react";
-import SideBarNav from "../_components/SideBarNav";
+
 import Link from "next/link";
-import { ModeToggle } from "../_components/ThemeToggle";
+
 import { UserButton } from "@clerk/nextjs";
-import DashSideBar from "../_components/DashSideBar";
+
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { Button, buttonVariants } from "~/components/ui/button";
+import { Button } from "~/components/ui/button";
+import SideBarNav from "~/app/_components/SideBarNav";
+import DashSideBar from "~/app/_components/DashSideBar";
+import { ModeToggle } from "~/app/_components/ThemeToggle";
 
 export default async function DashboardLayout({
   children,
@@ -44,14 +47,7 @@ export default async function DashboardLayout({
             <DashSideBar />
             <div className="flex w-full flex-1 flex-row items-end justify-end">
               {auth().sessionClaims?.metadata.role === "ADMIN" && (
-                <Link
-                  href={"/admin/home"}
-                  className={buttonVariants({
-                    variant: "outline",
-                  })}
-                >
-                  Admin Panel
-                </Link>
+                <Button variant={"outline"}>Admin Panel</Button>
               )}
             </div>
             <UserButton />

@@ -144,7 +144,7 @@ export default function TransactionDetailsComponents({
                     <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                       <div className="flex flex-col">
                         <span className="text-sm font-semibold text-muted-foreground">
-                          Sender Name
+                          Full Name
                         </span>
                         <strong>
                           {transaction.sender.firstName}{" "}
@@ -153,9 +153,15 @@ export default function TransactionDetailsComponents({
                       </div>
                       <div className="flex flex-col">
                         <span className="text-sm font-semibold text-muted-foreground">
-                          Sender Email
+                          Email
                         </span>
                         <strong className="">{transaction.sender.email}</strong>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-sm font-semibold text-muted-foreground">
+                          Phone Number
+                        </span>
+                        <strong className="">{transaction.sender.phone}</strong>
                       </div>
                     </div>
                   </AccordionContent>
@@ -191,50 +197,96 @@ export default function TransactionDetailsComponents({
                     </AccordionContent>
                   </AccordionItem>
                 )}
-                {transaction.status === "SUCCESS" && (
-                  <AccordionItem value="item-4">
-                    <AccordionTrigger>
-                      <div className="flex flex-row gap-24">
-                        <BanknoteIcon />
-                        Charge Details
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent>
-                      <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                        <div className="flex flex-col">
-                          <span className="text-sm font-semibold text-muted-foreground">
-                            Fincra Pay Code
-                          </span>
-                          <strong className="">
-                            {transaction.fincraPayCode}
-                          </strong>
+                {transaction.status === "SUCCESS" &&
+                  transaction.type === "pay-out" && (
+                    <AccordionItem value="item-4">
+                      <AccordionTrigger>
+                        <div className="flex flex-row gap-2">
+                          <BanknoteIcon />
+                          Receiver Details
                         </div>
-                        <div className="flex flex-col">
-                          <span className="text-sm font-semibold text-muted-foreground">
-                            Sender Phone
-                          </span>
-                          <strong className="">
-                            {transaction.fincraPhone}
-                          </strong>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                          <div className="flex flex-col">
+                            <span className="text-sm font-semibold text-muted-foreground">
+                              Customer Reference
+                            </span>
+                            <strong className="">
+                              {transaction.fincraPayCode}
+                            </strong>
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-sm font-semibold text-muted-foreground">
+                              Withdrawal Phone
+                            </span>
+                            <strong className="">
+                              {transaction.fincraPhone}
+                            </strong>
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-sm font-semibold text-muted-foreground">
+                              Withdrawal Operator
+                            </span>
+                            <strong className="">
+                              {transaction.fincraPhoneOperator}
+                            </strong>
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-sm font-semibold text-muted-foreground">
+                              Charge Reference
+                            </span>
+                            <strong>{transaction.fincraChargeReference}</strong>
+                          </div>
                         </div>
-                        <div className="flex flex-col">
-                          <span className="text-sm font-semibold text-muted-foreground">
-                            Sender Operator
-                          </span>
-                          <strong className="">
-                            {transaction.fincraPhoneOperator}
-                          </strong>
+                      </AccordionContent>
+                    </AccordionItem>
+                  )}
+                {transaction.status === "SUCCESS" &&
+                  transaction.type === "pay-in" && (
+                    <AccordionItem value="item-4">
+                      <AccordionTrigger>
+                        <div className="flex flex-row gap-2">
+                          <BanknoteIcon />
+                          Charge Details
                         </div>
-                        <div className="flex flex-col">
-                          <span className="text-sm font-semibold text-muted-foreground">
-                            Charge Reference
-                          </span>
-                          <strong>{transaction.fincraChargeReference}</strong>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                          <div className="flex flex-col">
+                            <span className="text-sm font-semibold text-muted-foreground">
+                              Fincra Pay Code
+                            </span>
+                            <strong className="">
+                              {transaction.fincraPayCode}
+                            </strong>
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-sm font-semibold text-muted-foreground">
+                              Sender Phone
+                            </span>
+                            <strong className="">
+                              {transaction.fincraPhone}
+                            </strong>
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-sm font-semibold text-muted-foreground">
+                              Sender Operator
+                            </span>
+                            <strong className="">
+                              {transaction.fincraPhoneOperator}
+                            </strong>
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-sm font-semibold text-muted-foreground">
+                              Charge Reference
+                            </span>
+                            <strong>{transaction.fincraChargeReference}</strong>
+                          </div>
                         </div>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                )}
+                      </AccordionContent>
+                    </AccordionItem>
+                  )}
               </Accordion>
             </div>
           </div>

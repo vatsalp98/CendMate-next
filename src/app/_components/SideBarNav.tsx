@@ -30,7 +30,7 @@ export default function SideBarNav() {
           )}
         >
           <Home className="h-4 w-4" />
-          Dashboard
+          Home
         </Link>
         <Link
           href="/wallets"
@@ -105,6 +105,7 @@ export default function SideBarNav() {
           <BadgeDollarSignIcon className="h-4 w-4" />
           Exchange Rate
         </Link>
+        <Separator className="my-4" />
       </nav>
     </>
   );
