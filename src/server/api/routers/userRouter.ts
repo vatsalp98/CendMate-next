@@ -1,6 +1,5 @@
 import { z } from "zod";
-import { createTRPCRouter, privateProcedure } from "../trpc";
-import { clerkClient } from "@clerk/nextjs/server";
+import { createTRPCRouter, privateProcedure, publicProcedure } from "../trpc";
 import axios from "axios";
 import { env } from "~/env";
 import type {
@@ -12,10 +11,26 @@ import { ComplyCube } from "@complycube/api";
 import { MapleRadFormatDate, getCountryCode } from "~/lib/utils";
 
 export const userRouter = createTRPCRouter({
+  getUserFromEmail: publicProcedure
+    .input(
+      z.object({
+        email: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findUnique({
+        where: {
+          email: input.email,
+        },
+      });
+
+      return user;
+    }),
+
   getUserDb: privateProcedure.query(async ({ ctx }) => {
     const user = await ctx.db.user.findUnique({
       where: {
-        uid: ctx.userId,
+        id: ctx.user.id,
       },
     });
 
@@ -41,7 +56,7 @@ export const userRouter = createTRPCRouter({
       const countryCode = getCountryCode(input.country);
       const userDb = await ctx.db.user.findUnique({
         where: {
-          uid: ctx.userId,
+          id: ctx.user.id,
         },
       });
 
@@ -150,14 +165,6 @@ export const userRouter = createTRPCRouter({
               postal: input.postal,
             },
           },
-        },
-      });
-
-      await clerkClient.users.updateUser(ctx.userId, {
-        publicMetadata: {
-          onboardingComplete: true,
-          db_id: userDb.id,
-          role: user.role,
         },
       });
 

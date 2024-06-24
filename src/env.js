@@ -24,6 +24,8 @@ export const env = createEnv({
     NIUM_CUSTOMER_HASH_ID: z.string(),
     NIUM_URL: z.string(),
     NIUM_API_KEY: z.string(),
+    AUTH_SECRET: z.string(),
+    RESEND_KEY: z.string(),
   },
 
   /**
@@ -44,6 +46,7 @@ export const env = createEnv({
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
     NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_URL,
+    AUTH_SECRET: process.env.AUTH_SECRET,
     // DB URL
     DATABASE_URI: process.env.DATABASE_URI,
     // MAPBOX
@@ -70,6 +73,8 @@ export const env = createEnv({
     NIUM_CUSTOMER_HASH_ID: process.env.NIUM_CUSTOMER_HASH_ID,
     NIUM_URL: process.env.NIUM_URL,
     NIUM_API_KEY: process.env.NIUM_API_KEY,
+    // RESEND
+    RESEND_KEY: process.env.RESEND_KEY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

@@ -47,7 +47,7 @@ export const withdrawalRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const user = await ctx.db.user.findUnique({
         where: {
-          uid: ctx.userId,
+          id: ctx.user.id,
         },
         include: {
           wallets: true,

@@ -6,11 +6,12 @@ import MaxWidthWrapper from "./MaxWitdhWrapper";
 import { useEffect, useState } from "react";
 import { cn } from "~/lib/utils";
 import MobileNav from "./MobileNav";
-import { UserButton, useAuth } from "@clerk/nextjs";
+import { useCurrentUser } from "~/hooks/use-current-user";
+import UserDropdown from "./UserDropdown";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
-  const { userId } = useAuth();
+  const user = useCurrentUser();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -71,7 +72,7 @@ const Navbar = () => {
                     </li>
                   </ul>
 
-                  {userId ? (
+                  {user ? (
                     <Link
                       href="/dashboard"
                       className={buttonVariants({
@@ -82,7 +83,7 @@ const Navbar = () => {
                     </Link>
                   ) : null}
 
-                  {userId ? null : (
+                  {user ? null : (
                     <Link
                       href="/sign-in"
                       className={buttonVariants({
@@ -93,8 +94,8 @@ const Navbar = () => {
                     </Link>
                   )}
 
-                  {userId ? (
-                    <UserButton />
+                  {user ? (
+                    <UserDropdown user={user} />
                   ) : (
                     <Link
                       href="/sign-up"

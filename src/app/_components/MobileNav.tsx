@@ -1,24 +1,29 @@
 "use client";
 
-import { Menu } from "lucide-react";
+import { LogOutIcon, Menu } from "lucide-react";
 import Link from "next/link";
 import { Icons } from "./Icons";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "~/components/ui/sheet";
-import { buttonVariants } from "~/components/ui/button";
+import { Button, buttonVariants } from "~/components/ui/button";
 import { useState, useEffect } from "react";
 import { cn } from "~/lib/utils";
-import { useAuth } from "@clerk/nextjs";
+import { useCurrentUser } from "~/hooks/use-current-user";
+import { logout } from "~/actions/logout";
+import { useRouter } from "next/navigation";
 
 const MobileNav = () => {
   const [scrolled, setScrolled] = useState(false);
-  const { userId } = useAuth();
+  const user = useCurrentUser();
+  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -89,7 +94,7 @@ const MobileNav = () => {
               </Link>
             </li>
 
-            {userId ? (
+            {user ? (
               <>
                 <li>
                   <Link
@@ -129,6 +134,23 @@ const MobileNav = () => {
               </>
             )}
           </ul>
+          {user && (
+            <SheetFooter className="mt-20 w-full">
+              <SheetClose>
+                <Button
+                  variant={"destructive"}
+                  className="flex-1 gap-2"
+                  onClick={async () => {
+                    await logout();
+                    router.refresh();
+                  }}
+                >
+                  <LogOutIcon />
+                  Logout
+                </Button>
+              </SheetClose>
+            </SheetFooter>
+          )}
         </SheetContent>
       </Sheet>
     </div>

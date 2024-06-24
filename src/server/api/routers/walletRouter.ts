@@ -10,7 +10,7 @@ export const walletRouter = createTRPCRouter({
   getWallets: privateProcedure.query(async ({ ctx }) => {
     const user = await ctx.db.user.findUnique({
       where: {
-        uid: ctx.userId,
+        id: ctx.user.id,
       },
     });
 
@@ -44,7 +44,7 @@ export const walletRouter = createTRPCRouter({
       });
       const user = await ctx.db.user.findUnique({
         where: {
-          uid: ctx.userId,
+          id: ctx.user.id,
         },
       });
 
@@ -75,7 +75,7 @@ export const walletRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const user = await ctx.db.user.findUnique({
         where: {
-          uid: ctx.userId,
+          id: ctx.user.id,
         },
       });
 
@@ -107,7 +107,7 @@ export const walletRouter = createTRPCRouter({
 
         const userNew = await ctx.db.user.update({
           where: {
-            uid: ctx.userId,
+            id: ctx.user.id,
           },
           data: {
             wallets: {
@@ -139,7 +139,7 @@ export const walletRouter = createTRPCRouter({
 
       const userNew = await ctx.db.user.update({
         where: {
-          uid: ctx.userId,
+          id: ctx.user.id,
         },
         data: {
           wallets: {

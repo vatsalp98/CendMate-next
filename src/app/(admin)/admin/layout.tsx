@@ -1,28 +1,18 @@
 import type { ReactNode } from "react";
-
 import Link from "next/link";
-
-import { UserButton } from "@clerk/nextjs";
-
-import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
 import { Button } from "~/components/ui/button";
 import SideBarNav from "~/app/_components/SideBarNav";
 import DashSideBar from "~/app/_components/DashSideBar";
 import { ModeToggle } from "~/app/_components/ThemeToggle";
+import UserDropdown from "~/app/_components/UserDropdown";
+import { currentUser } from "~/lib/auth";
 
 export default async function DashboardLayout({
   children,
 }: {
   children: ReactNode;
 }) {
-  if (!auth().sessionClaims?.metadata.kycComplete) {
-    redirect("/kyc");
-  }
-
-  if (!auth().sessionClaims?.metadata.onboardingComplete) {
-    redirect("/welcome");
-  }
+  const user = await currentUser();
 
   return (
     <>
@@ -46,11 +36,13 @@ export default async function DashboardLayout({
           <header className="flex h-14 items-center justify-end gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-10">
             <DashSideBar />
             <div className="flex w-full flex-1 flex-row items-end justify-end">
-              {auth().sessionClaims?.metadata.role === "ADMIN" && (
+              {user?.role === "ADMIN" && (
                 <Button variant={"outline"}>Admin Panel</Button>
               )}
             </div>
-            <UserButton />
+            {user && <UserDropdown user={user} />}
+
+            {/* <UserButton /> */}
           </header>
           <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
             {children}

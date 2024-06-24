@@ -5,17 +5,20 @@ import type { Metadata } from "next";
 import { ThemeProvider } from "./_components/ThemeProviders";
 import { TRPCReactProvider } from "~/trpc/react";
 import { Toaster } from "~/components/ui/sonner";
-import { ClerkProvider } from "@clerk/nextjs";
+import { SessionProvider } from "next-auth/react";
+import { auth } from "auth";
 
 export const metadata: Metadata = constructMetadata();
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await auth();
+
   return (
-    <ClerkProvider>
+    <SessionProvider session={session}>
       <html lang="en" className={`h-full`}>
         <body
           className={cn(
@@ -34,6 +37,6 @@ export default function RootLayout({
           <Toaster />
         </body>
       </html>
-    </ClerkProvider>
+    </SessionProvider>
   );
 }

@@ -1,8 +1,8 @@
 "use client";
 
-import type { User } from "@supabase/supabase-js";
 import { UserIcon, LogOutIcon, LayoutDashboardIcon } from "lucide-react";
 import Link from "next/link";
+import { logout } from "~/actions/logout";
 import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 import {
   DropdownMenu,
@@ -14,9 +14,10 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import type { ExtendedUser } from "~/types/auth";
 
 interface UserDropdownProps {
-  user: User | null;
+  user: ExtendedUser;
 }
 
 export default function UserDropdown({ user }: UserDropdownProps) {
@@ -29,7 +30,8 @@ export default function UserDropdown({ user }: UserDropdownProps) {
         >
           <Avatar className="rounded-full object-cover">
             <AvatarFallback className="font-semibold text-primary">
-              {user?.email?.substring(0, 2)}
+              {user.firstName[0]}
+              {user.lastName[0]}
             </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
@@ -62,7 +64,12 @@ export default function UserDropdown({ user }: UserDropdownProps) {
               </DropdownMenuItem>
             )}
 
-            <DropdownMenuItem className="flex cursor-pointer flex-row justify-between font-semibold text-red-500">
+            <DropdownMenuItem
+              className="flex cursor-pointer flex-row justify-between font-semibold text-red-500"
+              onClick={async () => {
+                await logout();
+              }}
+            >
               Log out
               <DropdownMenuShortcut>
                 <LogOutIcon />

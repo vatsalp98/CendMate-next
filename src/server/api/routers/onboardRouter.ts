@@ -10,7 +10,7 @@ export const onboardRouter = createTRPCRouter({
     const complyCube = new ComplyCube({ apiKey: env.COMPLYCUBE_KEY });
     const user = await ctx.db.user.findUnique({
       where: {
-        uid: ctx.userId,
+        id: ctx.user.id,
       },
     });
 

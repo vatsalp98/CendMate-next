@@ -3,7 +3,6 @@ import { env } from "~/env";
 import { db } from "~/server/db";
 import type { ComplyCheckCompleted } from "~/config/models";
 import { ComplyCube, EventVerifier } from "@complycube/api";
-import { clerkClient } from "@clerk/nextjs/server";
 
 export async function POST(req: Request) {
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
@@ -48,15 +47,15 @@ export async function POST(req: Request) {
 
     const clientUser = await complyCube.client.get(payload.payload.clientId);
 
-    await clerkClient.users.updateUser(userDb.uid, {
-      publicMetadata: {
-        kycComplete: true,
-        complyCubeId: clientUser.id,
-        onboardingComplete: true,
-        db_id: userDb.id,
-        role: userDb.role,
-      },
-    });
+    // await clerkClient.users.updateUser(userDb.uid, {
+    //   publicMetadata: {
+    //     kycComplete: true,
+    //     complyCubeId: clientUser.id,
+    //     onboardingComplete: true,
+    //     db_id: userDb.id,
+    //     role: userDb.role,
+    //   },
+    // });
 
     await db.user.update({
       where: {
@@ -84,12 +83,12 @@ export async function POST(req: Request) {
       });
     }
 
-    await clerkClient.users.updateUser(userDb.uid, {
-      publicMetadata: {
-        kycComplete: false,
-        complyCubeId: userDb.complyClientId,
-      },
-    });
+    // await clerkClient.users.updateUser(userDb.uid, {
+    //   publicMetadata: {
+    //     kycComplete: false,
+    //     complyCubeId: userDb.complyClientId,
+    //   },
+    // });
 
     return new Response("KYC Failure Webhook ingested", { status: 200 });
   }
