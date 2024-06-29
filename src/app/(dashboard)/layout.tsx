@@ -2,24 +2,16 @@ import type { ReactNode } from "react";
 import SideBarNav from "../_components/SideBarNav";
 import Link from "next/link";
 import { ModeToggle } from "../_components/ThemeToggle";
-import { UserButton } from "@clerk/nextjs";
 import DashSideBar from "../_components/DashSideBar";
-import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
-import { Button, buttonVariants } from "~/components/ui/button";
+import { currentUser } from "~/lib/auth";
+import UserDropdown from "../_components/UserDropdown";
 
 export default async function DashboardLayout({
   children,
 }: {
   children: ReactNode;
 }) {
-  if (!auth().sessionClaims?.metadata.kycComplete) {
-    redirect("/kyc");
-  }
-
-  if (!auth().sessionClaims?.metadata.onboardingComplete) {
-    redirect("/welcome");
-  }
+  const user = await currentUser();
 
   return (
     <>
@@ -42,19 +34,8 @@ export default async function DashboardLayout({
         <div className="flex flex-col">
           <header className="flex h-14 items-center justify-end gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-10">
             <DashSideBar />
-            <div className="flex w-full flex-1 flex-row items-end justify-end">
-              {auth().sessionClaims?.metadata.role === "ADMIN" && (
-                <Link
-                  href={"/admin/home"}
-                  className={buttonVariants({
-                    variant: "outline",
-                  })}
-                >
-                  Admin Panel
-                </Link>
-              )}
-            </div>
-            <UserButton />
+            <div className="flex w-full flex-1 flex-row items-end justify-end"></div>
+            {user && <UserDropdown user={user} />}
           </header>
           <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
             {children}

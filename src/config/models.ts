@@ -264,3 +264,79 @@ export interface FincraPayoutTransaction {
   traceId: string | null; // Assuming it can be a string or null
   valuedAt: string;
 }
+
+export interface Suggestion {
+  name: string;
+  mapbox_id: string;
+  feature_type: string;
+  address: string;
+  full_address: string;
+  place_formatted: string;
+  context: MapContext;
+  language: string;
+  maki: string;
+  poi_category?: string[];
+  poi_category_ids?: string[];
+  external_ids?: object;
+  metadata: object;
+}
+interface Country {
+  name: string;
+  country_code: string;
+  country_code_alpha_3: string;
+}
+
+interface Postcode {
+  id: string;
+  name: string;
+}
+
+interface Place {
+  id: string;
+  name: string;
+}
+
+interface Neighborhood {
+  id: string;
+  name: string;
+}
+
+interface Address {
+  name: string;
+  address_number: string;
+  street_name: string;
+}
+
+interface Street {
+  name: string;
+}
+
+interface Region {
+  id: string;
+  name: string;
+  region_code: string;
+  region_code_full: string;
+}
+
+interface MapContext {
+  country: Country;
+  postcode: Postcode;
+  place: Place;
+  neighborhood: Neighborhood;
+  address: Address;
+  street: Street;
+  region: Region;
+}
+
+export interface MapboxResponse {
+  suggestions: Suggestion[];
+  attribution: string;
+  response_id: string;
+}
+
+interface RateInfo {
+  rate: number;
+  timestamp: string;
+}
+
+export type RatesToUSD = Record<string, RateInfo>;

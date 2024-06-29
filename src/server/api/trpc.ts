@@ -10,7 +10,7 @@ import { TRPCError, initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 import { db } from "../db";
-import { auth } from "@clerk/nextjs/server";
+import { currentUser } from "~/lib/auth";
 /**
  * 1. CONTEXT
  *
@@ -24,10 +24,10 @@ import { auth } from "@clerk/nextjs/server";
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const { userId } = auth();
+  const user = await currentUser();
   return {
     db,
-    userId,
+    user,
     ...opts,
   };
 };
@@ -68,14 +68,14 @@ export const createCallerFactory = t.createCallerFactory;
  */
 
 const isAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.userId) {
+  if (!ctx.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
   return next({
     ctx: {
       ...ctx,
-      userId: ctx.userId,
+      user: ctx.user,
     },
   });
 });

@@ -6,11 +6,12 @@ import MaxWidthWrapper from "./MaxWitdhWrapper";
 import { useEffect, useState } from "react";
 import { cn } from "~/lib/utils";
 import MobileNav from "./MobileNav";
-import { UserButton, useAuth } from "@clerk/nextjs";
+import UserDropdown from "./UserDropdown";
+import { useCurrentSession } from "~/hooks/use-current-session";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
-  const { userId } = useAuth();
+  const { session } = useCurrentSession();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -71,7 +72,7 @@ const Navbar = () => {
                     </li>
                   </ul>
 
-                  {userId ? (
+                  {session ? (
                     <Link
                       href="/dashboard"
                       className={buttonVariants({
@@ -82,9 +83,9 @@ const Navbar = () => {
                     </Link>
                   ) : null}
 
-                  {userId ? null : (
+                  {session ? null : (
                     <Link
-                      href="/sign-in"
+                      href="/auth/login"
                       className={buttonVariants({
                         variant: "ghost",
                       })}
@@ -93,11 +94,11 @@ const Navbar = () => {
                     </Link>
                   )}
 
-                  {userId ? (
-                    <UserButton />
+                  {session ? (
+                    <UserDropdown user={session.user} />
                   ) : (
                     <Link
-                      href="/sign-up"
+                      href="/auth/register"
                       className={buttonVariants({
                         variant: "ghost",
                       })}

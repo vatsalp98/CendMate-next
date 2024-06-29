@@ -180,24 +180,15 @@ const currencyMap: Record<string, string> = {
   NGN: "Nigerian Naira",
   KES: "Kenyan Shilling",
   GHS: "Ghanaian Cedi",
-  TZS: "Tanzanian Shilling",
 };
 
 export function getCurrencyFullName(currencyCode: string): string {
   return currencyMap[currencyCode] ?? "Unknown Currency Code";
 }
 
+export const allCurrencies = ["USD", "CAD", "EUR", "GBP", "NGN", "KES", "GHS"];
+
 export function conversionCurrencies(currency: string, wallets: Wallet[]) {
-  const allCurrencies = [
-    "USD",
-    "CAD",
-    "EUR",
-    "GBP",
-    "NGN",
-    "KES",
-    "GHS",
-    "TZS",
-  ];
   const westernCurrencies = ["CAD", "EUR", "USD", "GBP"];
 
   const supportedConversions: Record<string, string[]> = {

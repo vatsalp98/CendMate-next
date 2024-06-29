@@ -3,10 +3,8 @@ import { env } from "~/env";
 import { db } from "~/server/db";
 import type { ComplyCheckCompleted } from "~/config/models";
 import { ComplyCube, EventVerifier } from "@complycube/api";
-import { clerkClient } from "@clerk/nextjs/server";
 
 export async function POST(req: Request) {
-  // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
   const WEBHOOK_SECRET = env.COMPLYCUBE_WEBHOOK_SECRET;
   const complyCube = new ComplyCube({ apiKey: env.COMPLYCUBE_KEY });
   const eventVerifier = new EventVerifier(WEBHOOK_SECRET);
@@ -46,48 +44,49 @@ export async function POST(req: Request) {
       });
     }
 
-    const clientUser = await complyCube.client.get(payload.payload.clientId);
+    const check = await complyCube.check.get(event.payload.id);
 
-    await clerkClient.users.updateUser(userDb.uid, {
-      publicMetadata: {
-        kycComplete: true,
-        complyCubeId: clientUser.id,
-        onboardingComplete: true,
-        db_id: userDb.id,
-        role: userDb.role,
-      },
-    });
+    if (check.type === "document_check") {
+      await db.user.update({
+        where: {
+          id: userDb.id,
+        },
+        data: {
+          isVerified: true,
+          isSubmitted: true,
+          complyDocumentCheckId: check.id,
+        },
+      });
 
-    await db.user.update({
-      where: {
-        id: userDb.id,
-      },
-      data: {
-        isVerified: true,
-        isSubmitted: true,
-      },
-    });
+      return new Response("KYC Document Check ID succesfully Saved", {
+        status: 200,
+      });
+    } else if (check.type === "identity_check") {
+      await db.user.update({
+        where: {
+          id: userDb.id,
+        },
+        data: {
+          isVerified: true,
+          isSubmitted: true,
+          complyIdentityCheckId: check.id,
+        },
+      });
 
-    return new Response("KYC Webhook succesfull Ingested", { status: 200 });
+      return new Response("KYC Identity Check ID succesfully Saved", {
+        status: 200,
+      });
+    }
   }
 
   if (event.type === "check.failed") {
-    const userDb = await db.user.findUnique({
+    await db.user.update({
       where: {
         complyClientId: payload.payload.clientId,
       },
-    });
-
-    if (!userDb) {
-      return new Response("Cannot find User from webhook", {
-        status: 400,
-      });
-    }
-
-    await clerkClient.users.updateUser(userDb.uid, {
-      publicMetadata: {
-        kycComplete: false,
-        complyCubeId: userDb.complyClientId,
+      data: {
+        isVerified: false,
+        isSubmitted: false,
       },
     });
 

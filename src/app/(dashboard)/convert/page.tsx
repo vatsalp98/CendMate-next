@@ -33,12 +33,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { conversionCurrencies, getCurrencySymbol } from "~/lib/utils";
+import {
+  conversionCurrencies,
+  formatMoney,
+  getCurrencySymbol,
+} from "~/lib/utils";
 import { api } from "~/trpc/react";
 
 export default function ConvertPage() {
   const { data: wallets } = api.wallet.getWallets.useQuery();
-  const { data: rates } = api.exchange.getExchangeRates.useQuery();
+  const { data: ratesToUSD } = api.exchange.getExchangeRates.useQuery();
 
   const [fromCurrency, setFromCurrency] = useState("");
   const [toCurrency, setToCurrency] = useState("");
@@ -74,31 +78,35 @@ export default function ConvertPage() {
     }
   };
 
-  const convertAmount = (
-    from_amount: string,
-    from_currency: string,
-    to_currency: string,
-  ) => {
-    convertForm.setValue("from_amount", from_amount);
-    const fromRate = rates?.find(
-      (item) => item.currency === from_currency,
-    )?.marketRate;
-    // setConversionRate(fromRate!);
-
-    if (to_currency === "USD") {
-      const amountInUSD = (parseFloat(from_amount) / fromRate!) * 0.97;
-      convertForm.setValue("to_amount", amountInUSD.toFixed(2));
-      setConversionRate(fromRate! * 0.97);
-    } else {
-      const toRate = rates?.find(
-        (item) => item.currency === to_currency,
-      )?.marketRate;
-      setConversionRate((fromRate! / toRate!) * 0.97);
-      const amountInUSD = parseFloat(from_amount) / fromRate!;
-      const converted = amountInUSD * toRate! * 0.97;
-      convertForm.setValue("to_amount", converted.toFixed(2));
+  function convert(fromCurrency: string, toCurrency: string, amount: number) {
+    if (ratesToUSD === undefined) {
+      throw new Error(`Rates to USD Null`);
     }
-  };
+
+    const fromRate = ratesToUSD[fromCurrency]?.rate;
+    const toRate = ratesToUSD[toCurrency]?.rate;
+
+    if (fromRate == null || toRate == null) {
+      throw new Error(
+        `Exchange rate for ${fromCurrency} or ${toCurrency} is missing.`,
+      );
+    }
+
+    if (fromCurrency === "USD") {
+      const result = amount * toRate;
+      convertForm.setValue("to_amount", formatMoney(result));
+      setConversionRate(toRate);
+    } else if (toCurrency === "USD") {
+      const result = amount / fromRate;
+      setConversionRate(1 / fromRate);
+      convertForm.setValue("to_amount", formatMoney(result));
+    } else {
+      const amountInUSD = amount / fromRate;
+      const result = amountInUSD * toRate;
+      setConversionRate(toRate / fromRate);
+      convertForm.setValue("to_amount", formatMoney(result));
+    }
+  }
 
   if (wallets)
     return (
@@ -238,10 +246,12 @@ export default function ConvertPage() {
                               onValueChange={(value) => {
                                 setFromCurrency(value);
                                 convertForm.setValue("from_currency", value);
-                                convertAmount(
-                                  convertForm.getValues("from_amount"),
+                                convert(
                                   value,
                                   toCurrency,
+                                  parseFloat(
+                                    convertForm.getValues("from_amount"),
+                                  ),
                                 );
                               }}
                             >
@@ -287,10 +297,10 @@ export default function ConvertPage() {
                                   placeholder="00.00"
                                   value={field.value}
                                   onChange={(e) =>
-                                    convertAmount(
-                                      e.target.value,
+                                    convert(
                                       fromCurrency,
                                       toCurrency,
+                                      parseFloat(e.target.value),
                                     )
                                   }
                                 />
@@ -315,10 +325,12 @@ export default function ConvertPage() {
                               onValueChange={(value) => {
                                 setToCurrency(value);
                                 convertForm.setValue("to_currency", value);
-                                convertAmount(
-                                  convertForm.getValues("from_amount"),
+                                convert(
                                   fromCurrency,
                                   value,
+                                  parseFloat(
+                                    convertForm.getValues("from_amount"),
+                                  ),
                                 );
                               }}
                             >

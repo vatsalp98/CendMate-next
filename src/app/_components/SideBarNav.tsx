@@ -2,11 +2,9 @@
 
 import {
   ArrowUpDownIcon,
-  BadgeDollarSignIcon,
   Home,
   RefreshCcw,
   User2Icon,
-  UserCog2,
   Wallet2,
 } from "lucide-react";
 import Link from "next/link";
@@ -79,31 +77,6 @@ export default function SideBarNav() {
         >
           <ArrowUpDownIcon className="h-4 w-4" />
           Transactions
-        </Link>
-        <Separator className="my-4" />
-        <Link
-          href="/profile"
-          className={cn(
-            "my-2 flex items-center gap-3 rounded-lg px-3 py-3 font-semibold",
-            pathName.startsWith("/profile")
-              ? "bg-blue-100 text-primary transition-all hover:text-primary"
-              : "text-muted-foreground transition-all hover:bg-gray-100 hover:text-primary",
-          )}
-        >
-          <UserCog2 className="h-4 w-4" />
-          Profile
-        </Link>
-        <Link
-          href="/exchange"
-          className={cn(
-            "my-2 flex items-center gap-3 rounded-lg px-3 py-3 font-semibold",
-            pathName.startsWith("/exchange")
-              ? "bg-blue-100 text-primary transition-all hover:text-primary"
-              : "text-muted-foreground transition-all hover:bg-gray-100 hover:text-primary",
-          )}
-        >
-          <BadgeDollarSignIcon className="h-4 w-4" />
-          Exchange Rate
         </Link>
         <Separator className="my-4" />
       </nav>

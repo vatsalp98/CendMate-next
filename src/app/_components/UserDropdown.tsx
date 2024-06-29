@@ -1,9 +1,14 @@
 "use client";
 
-import type { User } from "@supabase/supabase-js";
-import { UserIcon, LogOutIcon, LayoutDashboardIcon } from "lucide-react";
+import {
+  UserIcon,
+  LogOutIcon,
+  LayoutDashboardIcon,
+  HomeIcon,
+} from "lucide-react";
 import Link from "next/link";
-import { Avatar, AvatarFallback } from "~/components/ui/avatar";
+import { logout } from "~/actions/logout";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,9 +19,10 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import type { ExtendedUser } from "~/types/auth";
 
 interface UserDropdownProps {
-  user: User | null;
+  user: ExtendedUser;
 }
 
 export default function UserDropdown({ user }: UserDropdownProps) {
@@ -28,13 +34,18 @@ export default function UserDropdown({ user }: UserDropdownProps) {
           className="cursor-pointer overflow-visible hover:shadow-md"
         >
           <Avatar className="rounded-full object-cover">
+            <AvatarImage src={user.avatar} className="rounded-full bg-white" />
             <AvatarFallback className="font-semibold text-primary">
-              {user?.email?.substring(0, 2)}
+              {user.firstName[0]}
+              {user.lastName[0]}
             </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuLabel>{user?.email}</DropdownMenuLabel>
+          <DropdownMenuLabel className="flex w-full flex-col">
+            {user.firstName} {user.lastName}
+            <span className="text-sm text-muted-foreground">{user.email}</span>
+          </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem className="cursor-pointer">
@@ -51,9 +62,23 @@ export default function UserDropdown({ user }: UserDropdownProps) {
               </DropdownMenuShortcut>
             </DropdownMenuItem>
 
+            <DropdownMenuItem className="cursor-pointer">
+              <Link
+                href={{
+                  pathname: "/dashboard",
+                }}
+                className="font-semibold"
+              >
+                Home
+              </Link>
+              <DropdownMenuShortcut>
+                <HomeIcon />
+              </DropdownMenuShortcut>
+            </DropdownMenuItem>
+
             {user?.role === "ADMIN" && (
               <DropdownMenuItem className="cursor-pointer">
-                <Link href="/admin" className="font-semibold">
+                <Link href="/admin/home" className="font-semibold">
                   Admin dashboard
                 </Link>
                 <DropdownMenuShortcut>
@@ -62,8 +87,13 @@ export default function UserDropdown({ user }: UserDropdownProps) {
               </DropdownMenuItem>
             )}
 
-            <DropdownMenuItem className="flex cursor-pointer flex-row justify-between font-semibold text-red-500">
-              Log out
+            <DropdownMenuItem
+              className="flex cursor-pointer flex-row justify-between font-semibold text-red-500"
+              onClick={async () => {
+                await logout();
+              }}
+            >
+              <span>Log out</span>
               <DropdownMenuShortcut>
                 <LogOutIcon />
               </DropdownMenuShortcut>

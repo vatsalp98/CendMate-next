@@ -4,6 +4,17 @@ import { TRPCError } from "@trpc/server";
 import { generateUniqueId } from "~/lib/utils";
 
 export const transactionRouters = createTRPCRouter({
+  getAllTransactions: privateProcedure.query(async ({ ctx }) => {
+    const transactions = await ctx.db.transaction.findMany({
+      include: {
+        wallet: true,
+        sender: true,
+      },
+    });
+
+    return transactions;
+  }),
+
   getTransactions: privateProcedure
     .input(
       z.object({
@@ -13,7 +24,7 @@ export const transactionRouters = createTRPCRouter({
     .query(async ({ input, ctx }) => {
       const user = await ctx.db.user.findUnique({
         where: {
-          uid: ctx.userId,
+          id: ctx.user.id,
         },
       });
 
@@ -79,7 +90,7 @@ export const transactionRouters = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const user = await ctx.db.user.findUnique({
         where: {
-          uid: ctx.userId,
+          id: ctx.user.id,
         },
         include: {
           wallets: true,
@@ -169,7 +180,7 @@ export const transactionRouters = createTRPCRouter({
 
       const user = await ctx.db.user.findUnique({
         where: {
-          uid: ctx.userId,
+          id: ctx.user.id,
         },
       });
 
