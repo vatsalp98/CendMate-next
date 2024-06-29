@@ -25,6 +25,7 @@ model User {
   role                    Role                   @default(USER)
   firstName               String
   lastName                String
+  isBanned                Boolean                @default(false)
   complyClientId          String                 @unique
   userClass               String                 @default("customer")
   avatar                  String                 @default("/avatars/sampleUser.png")
@@ -32,9 +33,8 @@ model User {
   dob                     String?
   phone                   String
   userName                String
-  picIdFront              String?
-  picIdBack               String?
-  picHoldingId            String?
+  complyDocumentCheckId   String?
+  complyIdentityCheckId   String?
   typeOfId                String?
   idNumber                String?
   bvnNumber               String?

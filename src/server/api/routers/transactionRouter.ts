@@ -4,6 +4,17 @@ import { TRPCError } from "@trpc/server";
 import { generateUniqueId } from "~/lib/utils";
 
 export const transactionRouters = createTRPCRouter({
+  getAllTransactions: privateProcedure.query(async ({ ctx }) => {
+    const transactions = await ctx.db.transaction.findMany({
+      include: {
+        wallet: true,
+        sender: true,
+      },
+    });
+
+    return transactions;
+  }),
+
   getTransactions: privateProcedure
     .input(
       z.object({

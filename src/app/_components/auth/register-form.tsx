@@ -13,6 +13,7 @@ import {
   FormControl,
   FormMessage,
   Form,
+  FormDescription,
 } from "~/components/ui/form";
 import FormError from "../form-error";
 import FormSuccess from "../form-success";
@@ -24,7 +25,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
-import { CalendarIcon, MapPinIcon } from "lucide-react";
+import {
+  CalendarIcon,
+  CheckCircle,
+  MapPin,
+  MapPinIcon,
+  User2,
+} from "lucide-react";
 import { Calendar } from "~/components/ui/calendar";
 import { register } from "~/actions/register";
 import { searchAddress } from "~/actions/address";
@@ -107,12 +114,33 @@ export default function RegisterForm() {
       backButtonLabel={"Back to Login"}
       backButtonHref={"/auth/login"}
     >
+      <div className="mb-5 flex w-full flex-row items-center justify-center gap-2">
+        {currentStep === 0 && (
+          <div className="flex w-full flex-row items-center justify-center gap-2 font-semibold">
+            <User2 /> Personal Information
+          </div>
+        )}
+        {currentStep === 1 && !success && (
+          <div className="flex w-full flex-row items-center justify-center gap-2 font-semibold">
+            <MapPin /> Address Information
+          </div>
+        )}
+        {currentStep === 1 && success && (
+          <div className="flex flex-col items-center justify-center rounded-lg border px-2 py-4 text-center shadow-md dark:shadow-gray-800">
+            <CheckCircle className="h-10 w-10 text-green-600" />
+            <span className="mt-2 text-sm text-muted-foreground">
+              Your account has been created, please proceed to sign in after
+              verifying your email.
+            </span>
+          </div>
+        )}
+      </div>
       <Form {...registerForm}>
         <form
           onSubmit={registerForm.handleSubmit(handleRegister)}
           className="space-y-6"
         >
-          {currentStep === 1 && (
+          {currentStep === 1 && !success && (
             <>
               <FormField
                 name="address1"
@@ -136,9 +164,11 @@ export default function RegisterForm() {
                           }
                         }}
                         disabled={isPending}
-                        autoComplete="address-line1"
                       />
                     </FormControl>
+                    <FormDescription>
+                      Start typing to search for your address.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -426,9 +456,13 @@ export default function RegisterForm() {
 
           {!success && <FormError message={error} />}
           <FormSuccess message={success} />
-          <Button type="submit" className="w-full" disabled={isPending}>
-            Create account
-          </Button>
+          {!success && (
+            <>
+              <Button type="submit" className="w-full" disabled={isPending}>
+                Create account
+              </Button>
+            </>
+          )}
         </form>
       </Form>
     </CardWrapper>

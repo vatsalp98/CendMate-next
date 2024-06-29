@@ -15,7 +15,8 @@ export const authRoutes = [
 ];
 
 export const apiAuthPrefix = "/api/auth";
+export const apiWebhookPrefix = "/api/webhooks";
 
-export const DEFAULT_LOGIN_REDIRECT = "/settings";
+export const DEFAULT_LOGIN_REDIRECT = "/dashboard";
 
 export const NEW_USER_REDIRECT = "/kyc";

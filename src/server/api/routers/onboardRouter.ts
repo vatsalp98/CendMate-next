@@ -22,13 +22,9 @@ export const onboardRouter = createTRPCRouter({
     }
 
     const session = await complyCube.flow.createSession(user.complyClientId, {
-      checkTypes: [
-        "extensive_screening_check",
-        "document_check",
-        "identity_check",
-      ],
+      checkTypes: ["document_check", "identity_check"],
       successUrl: `${env.NEXT_PUBLIC_URL}/dashboard?new=true`,
-      cancelUrl: `${env.NEXT_PUBLIC_URL}/kyc`,
+      cancelUrl: `${env.NEXT_PUBLIC_URL}/dashboard`,
       theme: "light",
     });
 

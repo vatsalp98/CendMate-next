@@ -103,12 +103,12 @@ export default function CreateWalletForm({ refetch }: CreateWalletFormProps) {
                         </FormControl>
                         <SelectContent>
                           <SelectItem value="USD">USD</SelectItem>
+                          <SelectItem value="EUR">EUR</SelectItem>
                           <SelectItem value="CAD">CAD</SelectItem>
                           <SelectItem value="NGN">NGN</SelectItem>
                           <SelectItem value="GBP">GBP</SelectItem>
                           <SelectItem value="KES">KES</SelectItem>
                           <SelectItem value="GHS">GHS</SelectItem>
-                          <SelectItem value="TZS">TZS</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormDescription>

@@ -40,7 +40,7 @@ export default function VerificationForm() {
   return (
     <>
       <CardWrapper
-        headerLabel="Confirming your verification"
+        headerLabel="Confirming your email"
         backButtonLabel="Back to login"
         backButtonHref="/auth/login"
       >

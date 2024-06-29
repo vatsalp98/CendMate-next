@@ -14,11 +14,12 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { Separator } from "~/components/ui/separator";
+import type { RatesToUSD } from "~/config/models";
 import { formatCurrency, numberRegex } from "~/lib/utils";
 import { api } from "~/trpc/react";
 
 interface ExchangeFormProps {
-  exchangeRates: ExchangeRate[];
+  exchangeRates: RatesToUSD;
 }
 
 export default function ExchangeForm({ exchangeRates }: ExchangeFormProps) {
@@ -41,9 +42,6 @@ export default function ExchangeForm({ exchangeRates }: ExchangeFormProps) {
     NGN: z.string().regex(numberRegex, {
       message: "Invalid exchange rate",
     }),
-    TZS: z.string().regex(numberRegex, {
-      message: "Invalid exchange rate",
-    }),
   });
 
   type TExchangeRateValues = z.infer<typeof exchangeRateSchema>;
@@ -58,27 +56,12 @@ export default function ExchangeForm({ exchangeRates }: ExchangeFormProps) {
     resolver: zodResolver(exchangeRateSchema),
     mode: "onChange",
     defaultValues: {
-      EUR: exchangeRates
-        .find((item) => item.currency === "EUR")
-        ?.marketRate.toString(),
-      CAD: exchangeRates
-        .find((item) => item.currency === "CAD")
-        ?.marketRate.toString(),
-      GBP: exchangeRates
-        .find((item) => item.currency === "GBP")
-        ?.marketRate.toString(),
-      GHS: exchangeRates
-        .find((item) => item.currency === "GHS")
-        ?.marketRate.toString(),
-      KES: exchangeRates
-        .find((item) => item.currency === "KES")
-        ?.marketRate.toString(),
-      NGN: exchangeRates
-        .find((item) => item.currency === "NGN")
-        ?.marketRate.toString(),
-      TZS: exchangeRates
-        .find((item) => item.currency === "TZS")
-        ?.marketRate.toString(),
+      EUR: exchangeRates.EUR?.rate!.toFixed(2),
+      CAD: exchangeRates.CAD?.rate!.toFixed(2),
+      GBP: exchangeRates.GBP?.rate!.toFixed(2),
+      GHS: exchangeRates.GHS?.rate!.toFixed(2),
+      KES: exchangeRates.KES?.rate!.toFixed(2),
+      NGN: exchangeRates.NGN?.rate!.toFixed(2),
     },
   });
 
@@ -197,28 +180,14 @@ export default function ExchangeForm({ exchangeRates }: ExchangeFormProps) {
               </FormItem>
             )}
           />
-          <FormField
-            name="TZS"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between">
-                <FormLabel>Tanzanian Shilling (TZS)</FormLabel>
-                <div className="flex w-1/4 flex-col items-end justify-end gap-1">
-                  <FormControl className="w-full">
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </div>
-              </FormItem>
-            )}
-          />
         </form>
       </Form>
       <Separator className="mb-2 mt-3" />
       <div className="mb-3 flex flex-row items-center justify-between text-sm font-semibold text-muted-foreground">
         <span>All exchange rates are in USD.</span>
         <span>
-          Last Updated: {new Date(exchangeRates[0]!.createdAt).toLocaleString()}
+          Last Updated:{" "}
+          {new Date(exchangeRates.EUR?.timestamp ?? "").toLocaleString()}
         </span>
       </div>
       <div className="mt-2 flex flex-row items-center justify-end gap-2">

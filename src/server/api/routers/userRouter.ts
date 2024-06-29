@@ -11,6 +11,64 @@ import { ComplyCube } from "@complycube/api";
 import { MapleRadFormatDate, getCountryCode } from "~/lib/utils";
 
 export const userRouter = createTRPCRouter({
+  getAllUsers: privateProcedure.query(async ({ ctx }) => {
+    const users = await ctx.db.user.findMany();
+
+    return users;
+  }),
+
+  getUserKycInfo: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const complyCube = new ComplyCube({ apiKey: env.COMPLYCUBE_KEY });
+      const user = await ctx.db.user.findUnique({
+        where: {
+          id: input.id,
+        },
+      });
+
+      if (!user) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User not found in the DB",
+        });
+      }
+
+      // console.log("CHECKS", check.result.breakdown.extractedData);
+    }),
+
+  getUserFromId: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findUnique({
+        where: {
+          id: input.id,
+        },
+        include: {
+          address: true,
+          wallets: true,
+          transactions: true,
+        },
+      });
+
+      if (!user) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User not found in DB",
+        });
+      }
+
+      return user;
+    }),
+
   getUserFromEmail: publicProcedure
     .input(
       z.object({

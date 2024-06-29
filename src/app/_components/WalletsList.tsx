@@ -1,17 +1,12 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
+import { Card, CardHeader, CardTitle } from "~/components/ui/card";
 import { api } from "~/trpc/react";
 import Image from "next/image";
 import CreateWalletForm from "~/app/_components/CreateWalletForm";
 import Link from "next/link";
-import { formatMoney } from "~/lib/utils";
+import { formatCurrency, formatMoney } from "~/lib/utils";
 
 export default function WalletList() {
   const wallets = api.wallet.getWallets.useQuery();
@@ -57,12 +52,13 @@ export default function WalletList() {
                   <Image
                     src={`/flags/${item.currency}.png`}
                     alt="Flag logo"
-                    width={50}
-                    height={50}
+                    width={40}
+                    height={40}
                     className="mb-4"
                   />
-                  <CardTitle>{formatMoney(item.amount)}</CardTitle>
-                  <CardDescription>{item.currency}</CardDescription>
+                  <CardTitle>
+                    {formatCurrency(item.currency, formatMoney(item.amount))}
+                  </CardTitle>
                 </CardHeader>
               </Card>
             </Link>

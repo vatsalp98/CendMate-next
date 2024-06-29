@@ -3,10 +3,8 @@ import SideBarNav from "../_components/SideBarNav";
 import Link from "next/link";
 import { ModeToggle } from "../_components/ThemeToggle";
 import DashSideBar from "../_components/DashSideBar";
-import { buttonVariants } from "~/components/ui/button";
 import { currentUser } from "~/lib/auth";
 import UserDropdown from "../_components/UserDropdown";
-import { redirect } from "next/navigation";
 
 export default async function DashboardLayout({
   children,
@@ -14,10 +12,6 @@ export default async function DashboardLayout({
   children: ReactNode;
 }) {
   const user = await currentUser();
-
-  if (!user?.isVerified) {
-    redirect("/kyc");
-  }
 
   return (
     <>
@@ -40,18 +34,7 @@ export default async function DashboardLayout({
         <div className="flex flex-col">
           <header className="flex h-14 items-center justify-end gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-10">
             <DashSideBar />
-            <div className="flex w-full flex-1 flex-row items-end justify-end">
-              {user?.role === "ADMIN" && (
-                <Link
-                  href={"/admin/home"}
-                  className={buttonVariants({
-                    variant: "outline",
-                  })}
-                >
-                  Admin Panel
-                </Link>
-              )}
-            </div>
+            <div className="flex w-full flex-1 flex-row items-end justify-end"></div>
             {user && <UserDropdown user={user} />}
           </header>
           <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">

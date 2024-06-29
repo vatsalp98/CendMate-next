@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
+import type { RatesToUSD } from "~/config/models";
 
 export const exchangeRouter = createTRPCRouter({
   getExchangeRates: privateProcedure.query(async ({ ctx }) => {
@@ -10,7 +11,22 @@ export const exchangeRouter = createTRPCRouter({
       },
     });
 
-    return rates;
+    const ratesToUSD = rates.reduce<RatesToUSD>((acc, rate) => {
+      acc[rate.currency] = {
+        rate: rate.marketRate,
+        timestamp: rate.updatedAt.toISOString(),
+      };
+      return acc;
+    }, {});
+
+    if (!ratesToUSD) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Exchange Rates not found in DB",
+      });
+    }
+
+    return ratesToUSD;
   }),
 
   getExchangeRatesFromWalletId: privateProcedure

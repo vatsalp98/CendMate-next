@@ -27,6 +27,8 @@ export const {
 
       if (!existingUser?.emailVerified) return false;
 
+      if (existingUser.isBanned) return false;
+
       if (existingUser.isTwoFactorEnabled) {
         const twoFactorConfirmation = await db.twoFactorConfirmation.findUnique(
           {
@@ -62,6 +64,16 @@ export const {
         session.user.isSubmitted = token.isSubmitted as boolean;
         session.user.firstName = token.firstName as string;
         session.user.lastName = token.lastName as string;
+        session.user.dob = token.dob as string;
+        session.user.avatar = token.avatar as string;
+        session.user.notificationPreferences = token.notification as string;
+        session.user.country = token.country as string;
+        session.user.address1 = token.address1 as string;
+        session.user.address2 = token.address2 as string;
+        session.user.city = token.city as string;
+        session.user.country = token.country as string;
+        session.user.postal = token.postal as string;
+        session.user.isBanned = token.isBanned as boolean;
       }
 
       return session;
@@ -73,9 +85,20 @@ export const {
         where: {
           id: token.sub,
         },
+        include: {
+          address: true,
+        },
       });
 
       if (!existingUser) return token;
+
+      const address = await db.address.findUnique({
+        where: {
+          userId: existingUser.id,
+        },
+      });
+
+      if (!address) return token;
 
       token.role = existingUser.role;
       token.complyClientId = existingUser.complyClientId;
@@ -85,6 +108,17 @@ export const {
       token.isSubmitted = existingUser.isSubmitted;
       token.firstName = existingUser.firstName;
       token.lastName = existingUser.lastName;
+      token.dob = existingUser.dob;
+      token.avatar = existingUser.avatar;
+      token.notification = existingUser.notificationPreferences;
+      token.country = existingUser.country;
+      token.address1 = address.addressLine1;
+      token.address2 = address.addressLine2 ?? "";
+      token.city = address.city;
+      token.country = address.country;
+      token.state = address.state;
+      token.postal = address.postal;
+      token.isBanned = existingUser.isBanned;
       return token;
     },
   },

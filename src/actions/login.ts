@@ -4,7 +4,7 @@ import { signIn } from "auth";
 import { AuthError } from "next-auth";
 import type { z } from "zod";
 import { sendVerificationToken, sendTwoFactorEmail } from "~/config/mail";
-import { DEFAULT_LOGIN_REDIRECT, NEW_USER_REDIRECT } from "~/config/routes";
+import { DEFAULT_LOGIN_REDIRECT } from "~/config/routes";
 import {
   generateVerificationToken,
   generateTwoFactorToken,
@@ -30,6 +30,12 @@ export const login = async (values: z.infer<typeof loginSchema>) => {
   if (!existingUser?.email || !existingUser.password) {
     return {
       error: "Email does not exist!",
+    };
+  }
+
+  if (existingUser.isBanned) {
+    return {
+      error: "Please contact support, your account has been suspended.",
     };
   }
 
@@ -113,9 +119,7 @@ export const login = async (values: z.infer<typeof loginSchema>) => {
     await signIn("credentials", {
       email,
       password,
-      redirectTo: existingUser.isVerified
-        ? DEFAULT_LOGIN_REDIRECT
-        : NEW_USER_REDIRECT,
+      redirectTo: DEFAULT_LOGIN_REDIRECT,
     });
   } catch (error) {
     if (error instanceof AuthError) {

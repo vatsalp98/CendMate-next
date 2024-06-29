@@ -333,3 +333,10 @@ export interface MapboxResponse {
   attribution: string;
   response_id: string;
 }
+
+interface RateInfo {
+  rate: number;
+  timestamp: string;
+}
+
+export type RatesToUSD = Record<string, RateInfo>;

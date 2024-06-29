@@ -1,18 +1,17 @@
-"use client";
-
 import {
   BellIcon,
   CakeIcon,
   Edit,
-  Loader2Icon,
   MapIcon,
   MapPin,
+  MapPinnedIcon,
   MessageCircleIcon,
   PhoneCallIcon,
   ShieldCheckIcon,
   UserCog2Icon,
 } from "lucide-react";
 import MaxWidthWrapper from "~/app/_components/MaxWitdhWrapper";
+import ProfileInfoItem from "~/app/_components/profile-info-item";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Badge } from "~/components/ui/badge";
 import { Button, buttonVariants } from "~/components/ui/button";
@@ -28,23 +27,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "~/components/ui/sheet";
-import { api } from "~/trpc/react";
+import { currentUser } from "~/lib/auth";
+import { cn } from "~/lib/utils";
 
-export default function ProfilePage() {
-  const { data: userData, isLoading: userLoading } =
-    api.user.getUserDb.useQuery();
+export default async function ProfilePage() {
+  const user = await currentUser();
 
-  if (userLoading) {
-    return (
-      <>
-        <div className="flex min-h-screen w-full flex-col items-center justify-center">
-          <Loader2Icon className="animate-spin" />
-        </div>
-      </>
-    );
-  }
-
-  if (userData)
+  if (user)
     return (
       <>
         <MaxWidthWrapper>
@@ -93,81 +82,78 @@ export default function ProfilePage() {
                 <CardHeader className="flex flex-row items-center justify-center">
                   <Avatar className="h-20 w-20">
                     <AvatarImage
-                      src={userData.avatar}
+                      src={user?.avatar}
                       alt="user Avatar"
                       className="bg-gray-300 p-1 dark:bg-white"
                     />
                     <AvatarFallback>
-                      {userData.firstName[0]}
-                      {userData.lastName[0]}
+                      {user?.firstName[0]}
+                      {user?.lastName[0]}
                     </AvatarFallback>
                   </Avatar>
                 </CardHeader>
                 <CardContent className="flex flex-col items-center">
                   <h3 className="flex flex-row items-center justify-center gap-2 text-xl font-semibold">
-                    {userData.firstName} {userData.lastName}
-                    {userData.isVerified && <ShieldCheckIcon />}
+                    {user?.firstName} {user?.lastName}
+                    {user?.isVerified && <ShieldCheckIcon />}
                   </h3>
-                  <div className="mt-6 flex w-full flex-row items-center justify-between gap-2">
-                    <span className="flex flex-row items-center gap-2 text-sm text-muted-foreground">
-                      <PhoneCallIcon />
-                      Phone
+                  <ProfileInfoItem
+                    icon={<PhoneCallIcon />}
+                    title="Phone"
+                    value={user.phone}
+                  />
+                  <ProfileInfoItem
+                    icon={<MessageCircleIcon />}
+                    title="Email"
+                    value={user.email}
+                  />
+                  <ProfileInfoItem
+                    icon={<MapIcon />}
+                    title="Address"
+                    value={user.address1 + ", " + user.city}
+                  />
+                  <ProfileInfoItem
+                    icon={<MapPin />}
+                    title="Postal"
+                    value={user.postal}
+                  />
+                  <ProfileInfoItem
+                    icon={<MapPinnedIcon />}
+                    title="Country"
+                    value={user.country}
+                  />
+                  <ProfileInfoItem
+                    icon={<CakeIcon />}
+                    title="Birthday"
+                    value={new Date(user.dob!).toLocaleDateString()}
+                  />
+                  <ProfileInfoItem
+                    icon={<BellIcon />}
+                    title="Notification"
+                    value={user.notificationPreferences.toUpperCase()}
+                  />
+                  <ProfileInfoItem
+                    icon={<UserCog2Icon />}
+                    title="Role"
+                    value={user.role}
+                  />
+                  <div className="mt-2 flex w-full flex-row items-center justify-between gap-2 rounded-lg border p-2">
+                    <span className="flex flex-row items-center gap-2 text-sm font-semibold text-muted-foreground">
+                      <ShieldCheckIcon />
+                      2FA Authentication
                     </span>
-                    <Badge className="rounded-sm">{userData.phone}</Badge>
-                  </div>
-                  <Separator className="mt-1" />
-                  <div className="mt-4 flex w-full flex-row items-center justify-between gap-2">
-                    <span className="flex flex-row items-center gap-2 text-sm text-muted-foreground">
-                      <MessageCircleIcon />
-                      Email
-                    </span>
-                    <Badge className="rounded-sm">{userData.email}</Badge>
-                  </div>
-                  <Separator className="mt-1" />
-                  <div className="mt-4 flex w-full flex-row items-center justify-between gap-2">
-                    <span className="flex flex-row items-center gap-2 text-sm text-muted-foreground">
-                      <MapIcon />
-                      Address
-                    </span>
-                    <Badge className="rounded-sm">
-                      8888 University Drive East
+
+                    <Badge
+                      className={cn(
+                        user.isTwoFactorEnabled
+                          ? "bg-green-700 text-white"
+                          : "",
+                        "rounded-sm",
+                      )}
+                      variant={"secondary"}
+                    >
+                      {user.isTwoFactorEnabled ? "ON" : "OFF"}
                     </Badge>
-                  </div>
-                  <Separator className="mt-1" />
-                  <div className="mt-4 flex w-full flex-row items-center justify-between gap-2">
-                    <span className="flex flex-row items-center gap-2 text-sm text-muted-foreground">
-                      <MapPin />
-                      Country
-                    </span>
-                    <Badge className="rounded-sm">Canada</Badge>
-                  </div>
-                  <Separator className="mt-1" />
-                  <div className="mt-4 flex w-full flex-row items-center justify-between gap-2">
-                    <span className="flex flex-row items-center gap-2 text-sm text-muted-foreground">
-                      <CakeIcon />
-                      Birthday
-                    </span>
-                    <Badge className="rounded-sm">
-                      {new Date(userData.dob!).toLocaleDateString()}
-                    </Badge>
-                  </div>
-                  <Separator className="mt-1" />
-                  <div className="mt-4 flex w-full flex-row items-center justify-between gap-2">
-                    <span className="flex flex-row items-center gap-2 text-sm text-muted-foreground">
-                      <BellIcon />
-                      Notification
-                    </span>
-                    <Badge className="rounded-sm">
-                      {userData.notificationPreferences.toUpperCase()}
-                    </Badge>
-                  </div>
-                  <Separator className="mt-1" />
-                  <div className="mt-4 flex w-full flex-row items-center justify-between gap-2">
-                    <span className="flex flex-row items-center gap-2 text-sm text-muted-foreground">
-                      <UserCog2Icon />
-                      Role
-                    </span>
-                    <Badge className="rounded-sm">{userData.role}</Badge>
                   </div>
                 </CardContent>
               </Card>

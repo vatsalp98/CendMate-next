@@ -1,6 +1,7 @@
 import { env } from "~/env";
 import { Resend } from "resend";
 import { otpMailTemplate } from "~/emails/otp-code-mail";
+import { verifyMailTemplate } from "~/emails/verify-mail";
 
 const resend = new Resend(env.RESEND_KEY);
 
@@ -32,6 +33,6 @@ export const sendVerificationToken = async (email: string, token: string) => {
     from: "CendMate <donotreply@cendmate.com>",
     to: email,
     subject: "Confirm your email",
-    html: `<p>Click <a href="${confirmLink}">here</a> to confirm email.</p>`,
+    html: verifyMailTemplate(confirmLink),
   });
 };

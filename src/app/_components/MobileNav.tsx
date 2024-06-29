@@ -117,7 +117,7 @@ const MobileNav = () => {
               <>
                 <li>
                   <Link
-                    href={"/sign-in"}
+                    href={"/auth/login"}
                     className={buttonVariants({ variant: "link" })}
                   >
                     Sign In &rarr;
@@ -125,7 +125,7 @@ const MobileNav = () => {
                 </li>
                 <li>
                   <Link
-                    href={"/sign-up"}
+                    href={"/auth/register"}
                     className={buttonVariants({ variant: "link" })}
                   >
                     Sign Up &rarr;

@@ -7,6 +7,16 @@ import type { AccountCreationResponse } from "~/config/models";
 import { env } from "~/env";
 
 export const walletRouter = createTRPCRouter({
+  getAllWallets: privateProcedure.query(async ({ ctx }) => {
+    const wallets = await ctx.db.wallet.findMany({
+      include: {
+        owner: true,
+      },
+    });
+
+    return wallets;
+  }),
+
   getWallets: privateProcedure.query(async ({ ctx }) => {
     const user = await ctx.db.user.findUnique({
       where: {
@@ -41,6 +51,10 @@ export const walletRouter = createTRPCRouter({
         where: {
           id: input.id,
         },
+        include: {
+          owner: true,
+          transactions: true,
+        },
       });
       const user = await ctx.db.user.findUnique({
         where: {
@@ -48,7 +62,7 @@ export const walletRouter = createTRPCRouter({
         },
       });
 
-      if (!wallet) {
+      if (!wallet?.ownerId) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Wallet not found in DB.",

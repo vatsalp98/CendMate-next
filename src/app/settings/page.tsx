@@ -1,23 +1,17 @@
-"use client";
-
 import { logout } from "~/actions/logout";
 import { Button } from "~/components/ui/button";
-import { useCurrentUser } from "~/hooks/use-current-user";
+import { currentUser } from "~/lib/auth";
 
-export default function SettingsPage() {
-  const user = useCurrentUser();
+export default async function SettingsPage() {
+  const session = await currentUser();
 
   return (
     <>
-      {JSON.stringify(user)}
+      <div className="flex w-[100px] flex-row">{JSON.stringify(session)}</div>
 
-      <Button
-        onClick={async () => {
-          await logout();
-        }}
-      >
-        Sign Out
-      </Button>
+      <form action={logout}>
+        <Button>Sign Out</Button>
+      </form>
     </>
   );
 }
