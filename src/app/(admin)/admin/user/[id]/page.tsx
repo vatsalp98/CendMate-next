@@ -8,6 +8,7 @@ import {
   ArrowUpDownIcon,
   ChevronLeft,
   UserCheck2,
+  UserCheck,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import CopyButton from "~/app/_components/CopyButton";
@@ -23,7 +24,12 @@ import {
 } from "~/components/ui/accordion";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
-import { cn, formatCurrency, formatMoney } from "~/lib/utils";
+import {
+  cn,
+  formatComplyCubeDate,
+  formatCurrency,
+  formatMoney,
+} from "~/lib/utils";
 import { api } from "~/trpc/react";
 
 interface UserDetailsPageProps {
@@ -36,10 +42,10 @@ export default function UserDetailsPage({
   params: { id },
 }: UserDetailsPageProps) {
   const {
-    data: user,
+    data: userData,
     isLoading,
     refetch: refetchUser,
-  } = api.user.getUserFromId.useQuery({ id });
+  } = api.user.getCompleteUserInfo.useQuery({ id });
   const { mutate: getCheckInfo } = api.user.getUserKycInfo.useMutation();
 
   const router = useRouter();
@@ -51,7 +57,10 @@ export default function UserDetailsPage({
     );
   }
 
-  if (user)
+  if (userData) {
+    const user = userData.user;
+    const document_check = userData.document_check;
+    const result = userData.check_result;
     return (
       <>
         <div>
@@ -155,6 +164,97 @@ export default function UserDetailsPage({
                     </div>
                   </AccordionContent>
                 </AccordionItem>
+
+                <AccordionItem value="item-6">
+                  <AccordionTrigger>
+                    <div className="flex flex-row gap-2">
+                      <UserCheck />
+                      KYC Information
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                      <AccordionDetailsItem
+                        title="Status"
+                        value={document_check.status.toUpperCase()}
+                        isBadge={true}
+                        className={
+                          document_check.status === "complete"
+                            ? "bg-green-600"
+                            : "bg-yellow-600"
+                        }
+                      />
+                      <AccordionDetailsItem
+                        title="Legal Name"
+                        value={
+                          result.breakdown.extractedData.allExtractedData.visual
+                            .entityNameNative
+                        }
+                      />
+                      <AccordionDetailsItem
+                        title="Document Type"
+                        value={result.breakdown.extractedData.documentDetails.documentType.toUpperCase()}
+                        isBadge={true}
+                      />
+                      <AccordionDetailsItem
+                        title="Country of Issue"
+                        value={
+                          result.breakdown.extractedData.documentDetails
+                            .issuingCountry
+                        }
+                      />
+                      <AccordionDetailsItem
+                        title="Document number"
+                        value={
+                          result.breakdown.extractedData.documentDetails
+                            .documentNumber
+                        }
+                      />
+                      <AccordionDetailsItem
+                        title="Date of Issue"
+                        value={formatComplyCubeDate(
+                          result.breakdown.extractedData.documentDetails
+                            .issuingDate,
+                        )}
+                      />
+                      <AccordionDetailsItem
+                        title="Date of Expiry"
+                        value={formatComplyCubeDate(
+                          result.breakdown.extractedData.documentDetails
+                            .expirationDate,
+                        )}
+                      />
+                      <AccordionDetailsItem
+                        title="Nationality"
+                        value={
+                          result.breakdown.extractedData.holderDetails
+                            .nationality
+                        }
+                      />
+                      <AccordionDetailsItem
+                        title="Birth Place"
+                        value={
+                          result.breakdown.extractedData.holderDetails
+                            .birthPlace
+                        }
+                      />
+                      <AccordionDetailsItem
+                        title="Age"
+                        value={
+                          result.breakdown.extractedData.holderDetails.age +
+                          " years"
+                        }
+                      />
+                      <AccordionDetailsItem
+                        title="Date of Birth"
+                        value={formatComplyCubeDate(
+                          result.breakdown.extractedData.holderDetails.dob,
+                        )}
+                      />
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+
                 {user.address && (
                   <AccordionItem value="item-2">
                     <AccordionTrigger>
@@ -279,4 +379,5 @@ export default function UserDetailsPage({
         </MaxWidthWrapper>
       </>
     );
+  }
 }

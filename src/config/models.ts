@@ -340,3 +340,66 @@ interface RateInfo {
 }
 
 export type RatesToUSD = Record<string, RateInfo>;
+
+export interface ComplyCubeDate {
+  day: number;
+  month: number;
+  year: number;
+}
+
+interface DocumentDetails {
+  documentType: string;
+  hasTwoSides: boolean;
+  documentSubtypes: string[];
+  issuingCountry: string;
+  issuingDate: ComplyCubeDate;
+  expirationDate: ComplyCubeDate;
+  documentNumber: string;
+  personalNumber: string;
+}
+
+interface HolderDetails {
+  gender: string;
+  age: number;
+  birthPlace: string;
+  nationality: string;
+  dob: ComplyCubeDate;
+  lastName: string[];
+  firstName: string[];
+}
+
+interface VisualDetails {
+  lastName: string[];
+  lastNameNative: string;
+  firstName: string[];
+  firstNameNative: string;
+  entityNameNative: string;
+  dob: ComplyCubeDate;
+  birthPlace: string;
+  birthPlaceNative: string;
+  documentNumber: string;
+  personalNumber: string;
+  expirationDate: ComplyCubeDate;
+}
+
+export interface DocumentDetailsResult {
+  outcome: string;
+  breakdown: {
+    extractedData: {
+      documentDetails: DocumentDetails;
+      holderDetails: HolderDetails;
+      allExtractedData: {
+        visual: VisualDetails;
+        mrz: {
+          lastName: string[];
+          firstName: string[];
+          dob: ComplyCubeDate;
+          expirationDate: ComplyCubeDate;
+        };
+        barcode: {
+          personalNumber: string;
+        };
+      };
+    };
+  };
+}
