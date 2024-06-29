@@ -3,6 +3,7 @@ import { type ClassValue, clsx } from "clsx";
 import type { Metadata } from "next";
 import { twMerge } from "tailwind-merge";
 import { v4 as uuidv4 } from "uuid";
+import { ComplyCubeDate } from "~/config/models";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -223,6 +224,10 @@ export function formatDate(date: Date) {
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
+}
+
+export function formatComplyCubeDate(date: ComplyCubeDate) {
+  return `${date.day}/${date.month}/${date.year}`;
 }
 
 export function MapleRadFormatDate(date: Date) {

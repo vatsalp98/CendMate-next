@@ -7,6 +7,7 @@ import { TRPCReactProvider } from "~/trpc/react";
 import { Toaster } from "~/components/ui/sonner";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "auth";
+import { Analytics } from "@vercel/analytics/react";
 
 export const metadata: Metadata = constructMetadata();
 
@@ -35,6 +36,7 @@ export default async function RootLayout({
             <TRPCReactProvider>{children}</TRPCReactProvider>
           </ThemeProvider>
           <Toaster />
+          <Analytics />
         </body>
       </html>
     </SessionProvider>

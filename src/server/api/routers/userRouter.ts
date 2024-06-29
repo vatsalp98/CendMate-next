@@ -3,6 +3,7 @@ import { createTRPCRouter, privateProcedure, publicProcedure } from "../trpc";
 import axios from "axios";
 import { env } from "~/env";
 import type {
+  DocumentDetailsResult,
   MapleRadResponseModel,
   MapleRadUpgradeResponse,
 } from "~/config/models";
@@ -39,6 +40,45 @@ export const userRouter = createTRPCRouter({
       }
 
       // console.log("CHECKS", check.result.breakdown.extractedData);
+    }),
+
+  getCompleteUserInfo: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const complyCube = new ComplyCube({ apiKey: env.COMPLYCUBE_KEY });
+      const user = await ctx.db.user.findUnique({
+        where: {
+          id: input.id,
+        },
+        include: {
+          wallets: true,
+          address: true,
+          transactions: true,
+        },
+      });
+
+      if (!user || !user.complyDocumentCheckId) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User not found in DB",
+        });
+      }
+
+      const document_check = await complyCube.check.get(
+        user.complyDocumentCheckId,
+      );
+
+      const result = document_check.result as unknown as DocumentDetailsResult;
+
+      return {
+        user: user,
+        document_check: document_check,
+        check_result: result,
+      };
     }),
 
   getUserFromId: privateProcedure
