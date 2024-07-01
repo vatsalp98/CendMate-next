@@ -6,7 +6,8 @@ import { api } from "~/trpc/react";
 import Image from "next/image";
 import CreateWalletForm from "~/app/_components/CreateWalletForm";
 import Link from "next/link";
-import { formatCurrency, formatMoney } from "~/lib/utils";
+import { formatMoney, getCurrencySymbol } from "~/lib/utils";
+import { AnimatedNumbers } from "./animated-numbers";
 
 export default function WalletList() {
   const wallets = api.wallet.getWallets.useQuery();
@@ -57,7 +58,14 @@ export default function WalletList() {
                     className="mb-4"
                   />
                   <CardTitle>
-                    {formatCurrency(item.currency, formatMoney(item.amount))}
+                    <span className="mr-2 text-muted-foreground">
+                      {getCurrencySymbol(item.currency)}
+                    </span>
+                    {item.amount === 0 ? (
+                      <span>{formatMoney(item.amount)}</span>
+                    ) : (
+                      <AnimatedNumbers value={item.amount} />
+                    )}
                   </CardTitle>
                 </CardHeader>
               </Card>

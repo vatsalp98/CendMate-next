@@ -44,8 +44,8 @@ export default function ConvertPage() {
   const { data: wallets } = api.wallet.getWallets.useQuery();
   const { data: ratesToUSD } = api.exchange.getExchangeRates.useQuery();
 
-  const [fromCurrency, setFromCurrency] = useState("");
-  const [toCurrency, setToCurrency] = useState("");
+  const [fromCurrency, setFromCurrency] = useState("USD");
+  const [toCurrency, setToCurrency] = useState("USD");
   const [currentStep, setCurrentStep] = useState(0);
   const [conversionRate, setConversionRate] = useState(0);
 
@@ -296,13 +296,17 @@ export default function ConvertPage() {
                                   className="pl-12"
                                   placeholder="00.00"
                                   value={field.value}
-                                  onChange={(e) =>
+                                  onChange={(e) => {
+                                    convertForm.setValue(
+                                      "from_amount",
+                                      e.target.value,
+                                    );
                                     convert(
                                       fromCurrency,
                                       toCurrency,
                                       parseFloat(e.target.value),
-                                    )
-                                  }
+                                    );
+                                  }}
                                 />
                               </div>
                             </FormControl>

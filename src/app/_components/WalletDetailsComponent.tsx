@@ -9,9 +9,9 @@ import {
 import { api } from "~/trpc/react";
 import Image from "next/image";
 import {
-  formatCurrency,
   formatMoney,
   getCurrencyFullName,
+  getCurrencySymbol,
   isFincraCurrency,
 } from "~/lib/utils";
 import LimitCard from "./WithdrawalCard";
@@ -22,6 +22,7 @@ import Link from "next/link";
 import TransactionCard from "./TransactionCard";
 import FincraWithdrawalDialog from "./WithdrawalDialog";
 import { Badge } from "~/components/ui/badge";
+import { AnimatedNumbers } from "./animated-numbers";
 
 interface WalletDetailsProps {
   id: string;
@@ -62,10 +63,17 @@ export default function WalletDetails({ id }: WalletDetailsProps) {
                 </h2>
               </div>
               <div>
-                <Badge className="text-md flex flex-row rounded-md font-bold md:text-xl">
-                  {formatCurrency(
-                    walletData.wallet.currency,
-                    formatMoney(walletData.wallet.amount),
+                <Badge
+                  className="text-md flex flex-row rounded-md font-bold md:text-xl"
+                  variant={"secondary"}
+                >
+                  <span className="mr-2 text-muted-foreground">
+                    {getCurrencySymbol(walletData.wallet.currency)}
+                  </span>
+                  {walletData.wallet.amount === 0 ? (
+                    <span>{formatMoney(walletData.wallet.amount)}</span>
+                  ) : (
+                    <AnimatedNumbers value={walletData.wallet.amount} />
                   )}
                 </Badge>
               </div>

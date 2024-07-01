@@ -2,9 +2,10 @@
 
 import MaxWidthWrapper from "~/app/_components/MaxWitdhWrapper";
 import { Card, CardHeader, CardTitle } from "~/components/ui/card";
-import { formatCurrency, formatMoney } from "~/lib/utils";
+import { formatMoney, getCurrencySymbol } from "~/lib/utils";
 import { api } from "~/trpc/react";
 import Image from "next/image";
+import { AnimatedNumbers } from "~/app/_components/animated-numbers";
 
 export default function AdminHome() {
   const { data: balances } = api.admin.getWalletBalances.useQuery();
@@ -34,8 +35,15 @@ export default function AdminHome() {
                     height={50}
                     className="mb-4"
                   />
-                  <CardTitle>
-                    {formatCurrency(item.currency, formatMoney(item.total))}
+                  <CardTitle className="">
+                    <span className="mr-2 text-muted-foreground">
+                      {getCurrencySymbol(item.currency)}
+                    </span>
+                    {item.total === 0 ? (
+                      <span>{formatMoney(item.total)}</span>
+                    ) : (
+                      <AnimatedNumbers value={item.total} />
+                    )}
                   </CardTitle>
                 </CardHeader>
               </Card>
