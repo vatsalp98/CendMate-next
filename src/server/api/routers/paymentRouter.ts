@@ -7,6 +7,7 @@ import {
   type FincraApiResponse,
   type OperatorResponseModel,
 } from "~/config/models";
+import { formatCurrency, formatMoney, getTotalTransactions } from "~/lib/utils";
 
 export const paymentRouter = createTRPCRouter({
   fetchProviders: privateProcedure
@@ -56,6 +57,51 @@ export const paymentRouter = createTRPCRouter({
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Wallet not found in user wallets.",
+        });
+      }
+
+      const currencyLimit = user.limits.find(
+        (item) => item.currency === wallet.currency,
+      );
+      if (!currencyLimit) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: `User limits not found for ${wallet.currency}`,
+        });
+      }
+
+      const amount = parseFloat(input.amount);
+
+      const dailyTotal = getTotalTransactions(
+        user.transactions,
+        "daily",
+        "pay-in",
+      );
+      const weeklyTotal = getTotalTransactions(
+        user.transactions,
+        "weekly",
+        "pay-in",
+      );
+      const monthlyTotal = getTotalTransactions(
+        user.transactions,
+        "monthly",
+        "pay-in",
+      );
+
+      if (amount > currencyLimit.deposit_daily - dailyTotal) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `Sorry you have exceeded your daily deposit limits for this wallet. You have ${formatCurrency(wallet.currency, formatMoney(currencyLimit.deposit_daily - dailyTotal))} left.`,
+        });
+      } else if (amount > currencyLimit.deposit_weekly - weeklyTotal) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `Sorry you have exceeded your weekly deposit limits for this wallet.You have ${formatCurrency(wallet.currency, formatMoney(currencyLimit.deposit_weekly - weeklyTotal))} left.`,
+        });
+      } else if (amount > currencyLimit.deposit_monthly - monthlyTotal) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `Sorry you have exceeded your monthly deposit limits for this wallet.You have ${formatCurrency(wallet.currency, formatMoney(currencyLimit.deposit_monthly - monthlyTotal))} left.`,
         });
       }
 

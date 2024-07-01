@@ -3,7 +3,7 @@ import { type ClassValue, clsx } from "clsx";
 import type { Metadata } from "next";
 import { twMerge } from "tailwind-merge";
 import { v4 as uuidv4 } from "uuid";
-import { ComplyCubeDate } from "~/config/models";
+import type { ComplyCubeDate } from "~/config/models";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

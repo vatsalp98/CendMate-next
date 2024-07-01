@@ -82,7 +82,7 @@ export default function UserDetailsPage({
                 <CopyButton text={user.id} textTitle="User ID" />
               </div>
               <span className="text-lg font-semibold text-muted-foreground">
-                {user.firstName} {user.lastName} - {user.email}
+                {user.email}
               </span>
             </div>
 
@@ -117,12 +117,11 @@ export default function UserDetailsPage({
                     </div>
                   </AccordionTrigger>
                   <AccordionContent>
-                    <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                    <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                       <AccordionDetailsItem
                         title="Full Name"
                         value={user.firstName + " " + user.lastName}
                       />
-                      <AccordionDetailsItem title="Email" value={user.email} />
                       <AccordionDetailsItem title="Phone" value={user.phone} />
                       <AccordionDetailsItem
                         title="Role"
@@ -135,10 +134,6 @@ export default function UserDetailsPage({
                           value={new Date(user.emailVerified).toLocaleString()}
                         />
                       )}
-                      <AccordionDetailsItem
-                        title="Comply Cube ID"
-                        value={user.complyClientId}
-                      />
                       <AccordionDetailsItem
                         title="Birthday"
                         value={new Date(user.dob!).toLocaleDateString()}
@@ -160,6 +155,12 @@ export default function UserDetailsPage({
                         className={
                           user.isBanned ? "bg-red-600" : "bg-green-600"
                         }
+                      />
+                      <AccordionDetailsItem
+                        title="Comply Cube ID"
+                        value={user.complyClientId}
+                        className="bg-gray-600 text-xs"
+                        isBadge={true}
                       />
                     </div>
                   </AccordionContent>
