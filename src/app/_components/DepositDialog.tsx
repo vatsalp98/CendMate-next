@@ -1,3 +1,5 @@
+"use client";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ArrowUpRightFromSquare,
@@ -26,7 +28,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -42,6 +43,7 @@ import {
 } from "~/lib/utils";
 import { api } from "~/trpc/react";
 import CopyButton from "./CopyButton";
+import { useState } from "react";
 
 interface DepositDialogProps {
   currency: string;
@@ -62,6 +64,7 @@ export default function DepositDialog({
   //   api.payment.fetchProviders.useQuery({
   //     currency,
   //   });
+  const [open, setOpen] = useState(false);
 
   const fincraDepositFormSchema = z.object({
     amount: z.string().regex(/^\d+(\.\d{1,2})?$/, {
@@ -78,6 +81,8 @@ export default function DepositDialog({
     },
     onError: (error) => {
       toast.error(error.message);
+      form.reset();
+      setOpen(false);
     },
   });
 
@@ -178,7 +183,7 @@ export default function DepositDialog({
   if (isFincraCurrency(currency)) {
     return (
       <>
-        <Dialog>
+        <Dialog open={open} onOpenChange={(value) => setOpen(value)}>
           <DialogTrigger
             className={buttonVariants({
               variant: "outline",
@@ -248,10 +253,8 @@ export default function DepositDialog({
                                   onChange={(e) => {
                                     if (validateDecimal(e.target.value)) {
                                       field.onChange(e);
-                                    } else {
-                                      form.setError("amount", {
-                                        message: "Invalid Amount",
-                                      });
+                                    } else if (e.target.value === "") {
+                                      field.onChange("");
                                     }
                                   }}
                                   className="pl-12"
@@ -259,10 +262,6 @@ export default function DepositDialog({
                                 />
                               </div>
                             </FormControl>
-                            <FormDescription className="italic">
-                              Please note there is a 1% fee on your deposit
-                              amount.
-                            </FormDescription>
                             <FormMessage />
                           </FormItem>
                         )}

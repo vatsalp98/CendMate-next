@@ -85,6 +85,7 @@ export default function FincraWithdrawalDialog({
   const [selectedOperator, setSelectedOperator] = useState("");
   const [apiResponse, setApiResponse] = useState<MobileMoneyOperator[]>([]);
   const [withdrawDone, setWithdrawDone] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const steps = [
     {
@@ -110,6 +111,11 @@ export default function FincraWithdrawalDialog({
     onSuccess: () => {
       toast.success("Your Payout has been initiated.");
       setWithdrawDone(true);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+      methods.reset();
+      setOpen(false);
     },
   });
 
@@ -138,7 +144,7 @@ export default function FincraWithdrawalDialog({
 
   return (
     <>
-      <Dialog>
+      <Dialog open={open} onOpenChange={(value) => setOpen(value)}>
         <DialogTrigger
           className={buttonVariants({
             variant: "outline",
@@ -227,7 +233,7 @@ export default function FincraWithdrawalDialog({
                               <Input
                                 placeholder="Enter amount"
                                 {...field}
-                                className="pl-8"
+                                className="pl-11"
                               />
                             </div>
                           </FormControl>

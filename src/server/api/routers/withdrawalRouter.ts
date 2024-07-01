@@ -7,7 +7,7 @@ import {
   type OperatorResponseModel,
 } from "~/config/models";
 import { TRPCError } from "@trpc/server";
-import { generateUniqueId } from "~/lib/utils";
+import { generateUniqueId, getTotalTransactions } from "~/lib/utils";
 
 export const withdrawalRouter = createTRPCRouter({
   fetchProviders: privateProcedure
@@ -51,6 +51,8 @@ export const withdrawalRouter = createTRPCRouter({
         },
         include: {
           wallets: true,
+          limits: true,
+          transactions: true,
         },
       });
 
@@ -61,9 +63,22 @@ export const withdrawalRouter = createTRPCRouter({
         });
       }
 
+      const currencyLimits = user.limits.find(
+        (item) => item.currency === input.currency,
+      );
+
       const sourceWallet = user.wallets.find(
         (item) => item.currency === input.currency,
       );
+
+      const amount = parseFloat(input.amount);
+
+      if (!currencyLimits) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Currency limits not found for user.",
+        });
+      }
 
       if (!sourceWallet) {
         throw new TRPCError({
@@ -71,11 +86,55 @@ export const withdrawalRouter = createTRPCRouter({
           message: "Wallet not linked to the user in DB",
         });
       }
+
+      if (sourceWallet.amount < amount) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Not enough funds in your wallet for this transaction.",
+        });
+      }
+
+      const dailyTotal = getTotalTransactions(
+        user.transactions,
+        "daily",
+        "pay-out",
+      );
+      const weeklyTotal = getTotalTransactions(
+        user.transactions,
+        "weekly",
+        "pay-out",
+      );
+      const monthlyTotal = getTotalTransactions(
+        user.transactions,
+        "monthly",
+        "pay-out",
+      );
+
+      const dailyRemainder = currencyLimits.withdraw_daily - dailyTotal;
+      const weeklyRemainder = currencyLimits.withdraw_weekly - weeklyTotal;
+      const monthlyRemainder = currencyLimits.withdraw_monthly - monthlyTotal;
+
+      if (amount > dailyRemainder) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "You have exceeded your withdrawal limits for the day.",
+        });
+      } else if (amount > weeklyRemainder) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "You have exceeded your withdrawal limits for the week.",
+        });
+      } else if (amount > monthlyRemainder) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "You have exceeded your withdrawal limits for the month.",
+        });
+      }
+
       const sourceCurrency = sourceWallet.currency;
       const customerReference = generateUniqueId();
       const description = "Payment";
       const destinationCurrency = sourceWallet.currency;
-      const amount = parseFloat(input.amount);
 
       const beneficiary = {
         firstName: user.firstName,
